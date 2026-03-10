@@ -3,8 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { orders, orderItems } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import {
+  orders,
+  orderItems,
+  ingredients,
+  eventMenuItems,
+  recipeIngredients,
+} from "@/lib/db/schema";
+import { eq, sql, and, inArray } from "drizzle-orm";
 import { emitOrderEvent } from "@/lib/events";
 
 type OrderItemInput = {
@@ -61,6 +67,11 @@ export async function updateOrderStatus(formData: FormData) {
     .where(eq(orders.id, id))
     .returning();
 
+  // When bartender starts making: deduct ingredients and auto-86 if needed
+  if (status === "making") {
+    await deductInventory(id, order.eventId);
+  }
+
   emitOrderEvent({
     type: "status_change",
     orderId: id,
@@ -69,4 +80,88 @@ export async function updateOrderStatus(formData: FormData) {
   });
 
   revalidatePath("/admin/queue");
+  revalidatePath("/admin/inventory");
+}
+
+/**
+ * Deduct ingredient quantities for all items in an order.
+ * Then check if any ingredient is depleted and auto-86 affected menu items.
+ */
+async function deductInventory(orderId: string, eventId: string) {
+  // Get order items with recipe ingredients
+  const items = await db.query.orderItems.findMany({
+    where: eq(orderItems.orderId, orderId),
+    with: {
+      menuItem: {
+        with: {
+          recipe: {
+            with: {
+              recipeIngredients: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Aggregate deductions per ingredient
+  const deductions = new Map<string, number>();
+  for (const item of items) {
+    for (const ri of item.menuItem.recipe.recipeIngredients) {
+      const current = deductions.get(ri.ingredientId) || 0;
+      deductions.set(ri.ingredientId, current + ri.amount * item.quantity);
+    }
+  }
+
+  // Apply deductions
+  for (const [ingredientId, amount] of deductions) {
+    await db
+      .update(ingredients)
+      .set({
+        quantityOnHand: sql`GREATEST(0, ${ingredients.quantityOnHand} - ${amount})`,
+        updatedAt: new Date(),
+      })
+      .where(eq(ingredients.id, ingredientId));
+  }
+
+  // Check which ingredients are now depleted
+  const depletedIngredientIds = [...deductions.keys()];
+  if (depletedIngredientIds.length === 0) return;
+
+  const depletedIngredients = await db.query.ingredients.findMany({
+    where: and(
+      inArray(ingredients.id, depletedIngredientIds),
+      sql`${ingredients.quantityOnHand} <= 0`
+    ),
+  });
+
+  if (depletedIngredients.length === 0) return;
+
+  // Find all menu items in this event that use depleted ingredients
+  const depletedIds = depletedIngredients.map((i) => i.id);
+  const affectedRecipeIngredients = await db.query.recipeIngredients.findMany({
+    where: inArray(recipeIngredients.ingredientId, depletedIds),
+  });
+  const affectedRecipeIds = [
+    ...new Set(affectedRecipeIngredients.map((ri) => ri.recipeId)),
+  ];
+
+  if (affectedRecipeIds.length === 0) return;
+
+  // Auto-86: mark affected menu items as unavailable
+  const menuItems = await db.query.eventMenuItems.findMany({
+    where: eq(eventMenuItems.eventId, eventId),
+  });
+
+  for (const mi of menuItems) {
+    if (affectedRecipeIds.includes(mi.recipeId) && mi.available) {
+      await db
+        .update(eventMenuItems)
+        .set({ available: false })
+        .where(eq(eventMenuItems.id, mi.id));
+    }
+  }
+
+  revalidatePath(`/menu/${eventId}`);
+  revalidatePath(`/admin/events/${eventId}`);
 }
