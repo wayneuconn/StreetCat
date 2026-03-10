@@ -49,6 +49,7 @@
     "quantity": "Qty",
     "addToCart": "Add to Cart",
     "viewCart": "View Cart",
+    "backToMenu": "Back to menu",
     "emptyCart": "Your cart is empty",
     "placeOrder": "Place Order",
     "orderPlaced": "Order Placed!",

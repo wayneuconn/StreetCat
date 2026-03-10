@@ -1,19 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+
+const EVENT_KEY = "streetcat_event_id";
 
 export default function Home() {
   const t = useTranslations("home");
   const router = useRouter();
   const [code, setCode] = useState("");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(EVENT_KEY);
+    if (saved) {
+      router.replace(`/menu/${saved}`);
+    } else {
+      setReady(true);
+    }
+  }, [router]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = code.trim();
     if (!trimmed) return;
+    localStorage.setItem(EVENT_KEY, trimmed);
     router.push(`/menu/${trimmed}`);
   };
+
+  if (!ready) return null;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">

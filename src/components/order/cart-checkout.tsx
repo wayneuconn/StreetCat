@@ -20,11 +20,13 @@ export function CartCheckout() {
     setSavedName(name);
   }, []);
 
+  const menuLink = eventId ? `/menu/${eventId}` : "/";
+
   if (totalItems === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
         <p className="text-text-muted text-lg">{t("emptyCart")}</p>
-        <Link href="/menu" className="btn-primary inline-block">
+        <Link href={menuLink} className="btn-primary inline-block">
           {tMenu("title")}
         </Link>
       </div>
@@ -47,6 +49,13 @@ export function CartCheckout() {
       }}
       className="space-y-4"
     >
+      <Link
+        href={menuLink}
+        className="text-sm text-text-muted hover:text-accent-gold transition-colors"
+      >
+        &larr; {t("backToMenu")}
+      </Link>
+
       <div className="text-center">
         <h1 className="font-heading text-2xl font-bold text-accent-gold">
           {t("title")}

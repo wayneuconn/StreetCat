@@ -3,6 +3,7 @@ import { GuestShell } from "@/components/layout/guest-shell";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { QuickAddButton } from "@/components/order/quick-add-button";
+import { SaveEvent } from "@/components/save-event";
 
 function AbvStars({ level }: { level: number }) {
   return (
@@ -50,6 +51,7 @@ export default async function EventMenuPage({
 
   return (
     <GuestShell>
+      <SaveEvent eventId={eventId} />
       <div className="space-y-10">
         <div className="text-center">
           <h1 className="font-heading text-3xl font-bold text-accent-gold">

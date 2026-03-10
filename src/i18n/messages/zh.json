@@ -49,6 +49,7 @@
     "quantity": "数量",
     "addToCart": "加入购物车",
     "viewCart": "查看购物车",
+    "backToMenu": "返回菜单",
     "emptyCart": "购物车是空的",
     "placeOrder": "确认下单",
     "orderPlaced": "下单成功！",

@@ -2,16 +2,25 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useCart } from "@/hooks/use-cart";
 import { CartBar } from "@/components/order/cart-bar";
 
 export function GuestShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations();
+  const { eventId } = useCart();
+
+  // Try cart eventId first, then localStorage
+  const menuLink = eventId
+    ? `/menu/${eventId}`
+    : typeof window !== "undefined"
+      ? `/menu/${localStorage.getItem("streetcat_event_id") || ""}`
+      : "/";
 
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b border-border-gold bg-bg-primary/90 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
-          <Link href="/" className="font-heading text-lg font-bold text-accent-gold">
+          <Link href={menuLink} className="font-heading text-lg font-bold text-accent-gold">
             {t("common.appName")}
           </Link>
         </div>
