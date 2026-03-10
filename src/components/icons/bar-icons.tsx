@@ -51,11 +51,13 @@ export function GlassIcon({ type, className = "w-6 h-6" }: { type: string; class
 
 export function UnitIcon({ unit, className = "w-5 h-5" }: { unit: string; className?: string }) {
   const icons: Record<string, ReactNode> = {
-    oz: ( // jigger
+    oz: ( // bold jigger with fill
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M8 2l-2 9h12l-2-9H8z" />
-        <path d="M6 11l2 9h8l2-9" />
-        <circle cx="12" cy="11" r="1" fill="currentColor" stroke="none" />
+        <path d="M7 2h10l-2 8H9L7 2z" fill="currentColor" opacity="0.15" />
+        <path d="M7 2h10l-2 8H9L7 2z" />
+        <path d="M9 10h6l2 10H7l2-10z" fill="currentColor" opacity="0.08" />
+        <path d="M9 10h6l2 10H7l2-10z" />
+        <path d="M9 10h6" strokeWidth="2" />
       </svg>
     ),
     ml: ( // measuring cup
@@ -64,11 +66,9 @@ export function UnitIcon({ unit, className = "w-5 h-5" }: { unit: string; classN
         <path d="M10 8h4M10 13h3M10 18h4" strokeLinecap="round" />
       </svg>
     ),
-    dash: ( // bitters bottle
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M10 2h4v4l2 2v12a2 2 0 01-2 2h-4a2 2 0 01-2-2V8l2-2V2z" />
-        <path d="M10 6h4" />
-        <circle cx="12" cy="14" r="1.5" fill="currentColor" stroke="none" />
+    dash: ( // water drop
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor" opacity="0.7">
+        <path d="M12 2C12 2 6 10 6 15a6 6 0 0012 0c0-5-6-13-6-13z" />
       </svg>
     ),
     piece: ( // single item

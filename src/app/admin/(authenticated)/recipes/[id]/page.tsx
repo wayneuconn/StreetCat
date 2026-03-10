@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { getRecipe } from "@/lib/queries/recipes";
+import { getRecipe, getDistinctFlavors } from "@/lib/queries/recipes";
 import { getAllIngredients } from "@/lib/queries/inventory";
 import {
   addRecipeIngredient,
@@ -21,7 +21,10 @@ export default async function RecipeEditorPage({
   const recipe = await getRecipe(id);
   if (!recipe) notFound();
 
-  const allIngredients = await getAllIngredients();
+  const [allIngredients, existingFlavors] = await Promise.all([
+    getAllIngredients(),
+    getDistinctFlavors(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -37,7 +40,7 @@ export default async function RecipeEditorPage({
         </Link>
       </div>
 
-      <RecipeEditor recipe={recipe} />
+      <RecipeEditor recipe={recipe} existingFlavors={existingFlavors} />
 
       {/* Ingredients */}
       <div className="card space-y-4">

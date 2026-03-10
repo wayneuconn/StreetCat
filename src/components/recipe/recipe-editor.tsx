@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { updateRecipe } from "@/lib/actions/recipes";
 import type { Recipe } from "@/lib/db/schema";
 
-export function RecipeEditor({ recipe }: { recipe: Recipe }) {
+export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe; existingFlavors?: string[] }) {
   const t = useTranslations("admin.recipes");
   const tc = useTranslations("common");
   const [imageUrl, setImageUrl] = useState(recipe.imageUrl || "");
@@ -120,7 +120,14 @@ export function RecipeEditor({ recipe }: { recipe: Recipe }) {
             defaultValue={recipe.flavor || ""}
             placeholder="e.g. 酸甜, 清爽"
             className="input"
+            list="flavor-options"
+            autoComplete="off"
           />
+          <datalist id="flavor-options">
+            {existingFlavors.map((f) => (
+              <option key={f} value={f} />
+            ))}
+          </datalist>
         </div>
       </div>
 

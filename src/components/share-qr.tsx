@@ -167,6 +167,7 @@ export function ShareQR({
 
   return (
     <>
+      <canvas ref={canvasRef} className="fixed -left-[9999px] -top-[9999px]" />
       <button
         type="button"
         onClick={generate}
@@ -187,7 +188,6 @@ export function ShareQR({
             className="flex flex-col items-center gap-4 animate-fade-up"
             onClick={(e) => e.stopPropagation()}
           >
-            <canvas ref={canvasRef} className="hidden" />
             {imageUrl && (
               <img
                 src={imageUrl}
