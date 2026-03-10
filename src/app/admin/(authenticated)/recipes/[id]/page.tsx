@@ -55,32 +55,47 @@ export default async function RecipeEditorPage({
         </h3>
 
         {recipe.recipeIngredients.length > 0 && (
-          <div className="space-y-2">
-            {recipe.recipeIngredients.map((ri) => (
-              <div
-                key={ri.id}
-                className="flex items-center justify-between py-2 border-b border-border-gold"
-              >
-                <span className="text-text-primary">
-                  {ri.ingredient.name}
-                </span>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-text-secondary">
-                    {ri.amount} {ri.unit}
-                  </span>
-                  <form action={removeRecipeIngredient}>
-                    <input type="hidden" name="id" value={ri.id} />
-                    <input type="hidden" name="recipeId" value={recipe.id} />
-                    <button
-                      type="submit"
-                      className="text-xs text-text-muted hover:text-accent-burgundy transition-colors"
-                    >
-                      {tc("delete")}
-                    </button>
-                  </form>
+          <div className="space-y-4">
+            {CATEGORY_ORDER
+              .filter((cat) =>
+                recipe.recipeIngredients.some((ri) => ri.ingredient.category === cat)
+              )
+              .map((cat) => (
+                <div key={cat}>
+                  <h4 className="text-xs font-semibold text-accent-gold/70 uppercase tracking-wider mb-2">
+                    {CATEGORY_LABELS[cat]}
+                  </h4>
+                  <div className="space-y-1">
+                    {recipe.recipeIngredients
+                      .filter((ri) => ri.ingredient.category === cat)
+                      .map((ri) => (
+                        <div
+                          key={ri.id}
+                          className="flex items-center justify-between py-1.5 border-b border-border-gold/30"
+                        >
+                          <span className="text-text-primary text-sm">
+                            {ri.ingredient.name}
+                          </span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm text-text-secondary">
+                              {ri.amount} {ri.unit}
+                            </span>
+                            <form action={removeRecipeIngredient}>
+                              <input type="hidden" name="id" value={ri.id} />
+                              <input type="hidden" name="recipeId" value={recipe.id} />
+                              <button
+                                type="submit"
+                                className="text-xs text-text-muted hover:text-accent-burgundy transition-colors"
+                              >
+                                {tc("delete")}
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
 
