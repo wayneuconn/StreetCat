@@ -20,6 +20,7 @@ export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe;
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("name", recipe.name);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (data.url) {

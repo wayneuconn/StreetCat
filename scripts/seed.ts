@@ -8,6 +8,28 @@ const pool = new Pool({
 });
 const db = drizzle(pool, { schema });
 
+const BUCKET_NAME = process.env.GCS_BUCKET || "streetcat-images-489803";
+const GCS_BASE = `https://storage.googleapis.com/${BUCKET_NAME}`;
+
+function nameToSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-").replace(/^-|-$/g, "");
+}
+
+async function findImageUrl(name: string): Promise<string | null> {
+  const slug = nameToSlug(name);
+  // Check common extensions
+  for (const ext of ["png", "jpg", "jpeg", "webp"]) {
+    const url = `${GCS_BASE}/recipes/${slug}.${ext}`;
+    try {
+      const res = await fetch(url, { method: "HEAD" });
+      if (res.ok) return url;
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}
+
 async function seed() {
   console.log("Seeding database...\n");
 
@@ -431,6 +453,9 @@ async function seed() {
   ];
 
   for (const r of recipesData) {
+    const imageUrl = await findImageUrl(r.name);
+    if (imageUrl) console.log(`  Found image for ${r.name}: ${imageUrl}`);
+
     const [recipe] = await db
       .insert(schema.recipes)
       .values({
@@ -443,6 +468,7 @@ async function seed() {
         flavor: r.flavor,
         characteristics: r.characteristics,
         abv: r.abv,
+        imageUrl,
       })
       .returning();
 

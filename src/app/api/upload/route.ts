@@ -15,7 +15,12 @@ export async function POST(request: NextRequest) {
   }
 
   const ext = file.name.split(".").pop() || "jpg";
-  const filename = `recipes/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  // Use a stable name from form data if provided (e.g. recipe name), otherwise fallback
+  const stableName = formData.get("name") as string | null;
+  const slug = stableName
+    ? stableName.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-").replace(/^-|-$/g, "")
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const filename = `recipes/${slug}.${ext}`;
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const blob = bucket.file(filename);
