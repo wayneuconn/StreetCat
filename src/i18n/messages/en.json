@@ -1,0 +1,134 @@
+{
+  "common": {
+    "appName": "StreetCat Bar",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "confirm": "Confirm",
+    "search": "Search",
+    "noResults": "No results",
+    "actions": "Actions"
+  },
+  "nav": {
+    "menu": "Menu",
+    "order": "Order",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "queue": "Order Queue",
+    "inventory": "Inventory",
+    "recipes": "Recipes",
+    "events": "Events",
+    "logout": "Logout"
+  },
+  "menu": {
+    "title": "Tonight's Menu",
+    "subtitle": "Curated Cocktails",
+    "noActiveEvent": "No active event at the moment",
+    "baseSpirit": "Base Spirit",
+    "flavor": "Flavor",
+    "characteristics": "Characteristics",
+    "abv": "ABV",
+    "price": "Price",
+    "orderThis": "Order This",
+    "unavailable": "Sold Out"
+  },
+  "order": {
+    "title": "Place Order",
+    "guestName": "Your Name",
+    "guestNamePlaceholder": "Enter your name",
+    "selectDrinks": "Select Drinks",
+    "quantity": "Qty",
+    "placeOrder": "Place Order",
+    "orderPlaced": "Order Placed!",
+    "trackOrder": "Track Order",
+    "status": {
+      "title": "Order Status",
+      "pending": "Pending",
+      "making": "Being Made",
+      "ready": "Ready",
+      "picked_up": "Picked Up"
+    }
+  },
+  "admin": {
+    "login": {
+      "title": "Admin Login",
+      "password": "Password",
+      "passwordPlaceholder": "Enter admin password",
+      "submit": "Login",
+      "error": "Wrong password"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "activeEvent": "Active Event",
+      "pendingOrders": "Pending Orders",
+      "totalOrders": "Total Orders",
+      "menuItems": "Menu Items"
+    },
+    "queue": {
+      "title": "Order Queue",
+      "empty": "No orders yet",
+      "markMaking": "Start Making",
+      "markReady": "Mark Ready",
+      "markPickedUp": "Picked Up",
+      "recipe": "Recipe",
+      "guest": "Guest"
+    },
+    "inventory": {
+      "title": "Inventory",
+      "addIngredient": "Add Ingredient",
+      "editIngredient": "Edit Ingredient",
+      "name": "Name",
+      "category": "Category",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "categories": {
+        "spirit": "Spirit",
+        "mixer": "Mixer",
+        "garnish": "Garnish",
+        "bitter": "Bitter",
+        "other": "Other"
+      }
+    },
+    "recipes": {
+      "title": "Recipes",
+      "addRecipe": "Add Recipe",
+      "editRecipe": "Edit Recipe",
+      "name": "Name",
+      "description": "Description",
+      "instructions": "Instructions",
+      "glassType": "Glass Type",
+      "garnish": "Garnish",
+      "ingredients": "Ingredients",
+      "addIngredient": "Add Ingredient",
+      "amount": "Amount",
+      "baseSpirit": "Base Spirit",
+      "flavor": "Flavor",
+      "characteristics": "Characteristics",
+      "abv": "Est. ABV (%)",
+      "price": "Price",
+      "image": "Image",
+      "uploadImage": "Upload Image",
+      "changeImage": "Change Image"
+    },
+    "events": {
+      "title": "Events",
+      "addEvent": "Create Event",
+      "editEvent": "Edit Event",
+      "name": "Event Name",
+      "date": "Date",
+      "expectedGuests": "Expected Guests",
+      "isActive": "Active",
+      "menuBuilder": "Menu Builder",
+      "addToMenu": "Add to Menu",
+      "shoppingList": "Shopping List",
+      "shoppingListEmpty": "No additional purchases needed",
+      "needed": "Needed",
+      "onHand": "On Hand",
+      "toBuy": "To Buy"
+    }
+  }
+}

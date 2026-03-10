@@ -1,0 +1,234 @@
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { getEvent } from "@/lib/queries/events";
+import { getAllRecipes } from "@/lib/queries/recipes";
+import { calculateShoppingList } from "@/lib/shopping";
+import {
+  updateEvent,
+  toggleEventActive,
+  addMenuItem,
+  removeMenuItem,
+  toggleMenuItemAvailable,
+} from "@/lib/actions/events";
+import Link from "next/link";
+
+export default async function EventEditorPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const t = await getTranslations("admin.events");
+  const tc = await getTranslations("common");
+
+  const event = await getEvent(id);
+  if (!event) notFound();
+
+  const allRecipes = await getAllRecipes();
+  const shoppingList = await calculateShoppingList(id);
+
+  // Recipes not already on the menu
+  const menuRecipeIds = new Set(event.menuItems.map((m) => m.recipeId));
+  const availableRecipes = allRecipes.filter((r) => !menuRecipeIds.has(r.id));
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-2xl font-bold text-accent-gold">
+          {t("editEvent")}
+        </h1>
+        <Link
+          href="/admin/events"
+          className="text-sm text-text-muted hover:text-accent-gold transition-colors"
+        >
+          {tc("back")}
+        </Link>
+      </div>
+
+      {/* Event details */}
+      <form action={updateEvent} className="card space-y-4">
+        <input type="hidden" name="id" value={event.id} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <label className="block text-sm text-text-secondary mb-1">
+              {t("name")}
+            </label>
+            <input
+              name="name"
+              required
+              defaultValue={event.name}
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-text-secondary mb-1">
+              {t("date")}
+            </label>
+            <input
+              name="date"
+              type="date"
+              required
+              defaultValue={
+                new Date(event.date).toISOString().split("T")[0]
+              }
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-text-secondary mb-1">
+              {t("expectedGuests")}
+            </label>
+            <input
+              name="expectedGuests"
+              type="number"
+              min="1"
+              defaultValue={event.expectedGuests}
+              className="input"
+            />
+          </div>
+        </div>
+        <button type="submit" className="btn-primary text-sm">
+          {tc("save")}
+        </button>
+      </form>
+      <form action={toggleEventActive} className="-mt-2">
+        <input type="hidden" name="id" value={event.id} />
+        <input
+          type="hidden"
+          name="isActive"
+          value={String(event.isActive)}
+        />
+        <button
+          type="submit"
+          className={`text-sm ${
+            event.isActive ? "btn-danger" : "btn-secondary"
+          }`}
+        >
+          {event.isActive ? "Deactivate" : "Activate"}
+        </button>
+      </form>
+
+      {/* Menu builder */}
+      <div className="card space-y-4">
+        <h3 className="font-heading text-lg text-accent-gold">
+          {t("menuBuilder")}
+        </h3>
+
+        {event.menuItems.length > 0 && (
+          <div className="space-y-2">
+            {event.menuItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between py-2 border-b border-border-gold"
+              >
+                <span
+                  className={
+                    item.available
+                      ? "text-text-primary"
+                      : "text-text-muted line-through"
+                  }
+                >
+                  {item.recipe.name}
+                </span>
+                <div className="flex items-center gap-2">
+                  <form action={toggleMenuItemAvailable}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <input
+                      type="hidden"
+                      name="eventId"
+                      value={event.id}
+                    />
+                    <input
+                      type="hidden"
+                      name="available"
+                      value={String(item.available)}
+                    />
+                    <button
+                      type="submit"
+                      className={`badge text-xs ${
+                        item.available ? "badge-ready" : "badge-picked_up"
+                      }`}
+                    >
+                      {item.available ? "ON" : "86'd"}
+                    </button>
+                  </form>
+                  <form action={removeMenuItem}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <input
+                      type="hidden"
+                      name="eventId"
+                      value={event.id}
+                    />
+                    <button
+                      type="submit"
+                      className="text-xs text-text-muted hover:text-accent-burgundy transition-colors"
+                    >
+                      {tc("delete")}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {availableRecipes.length > 0 && (
+          <form action={addMenuItem} className="flex gap-3 items-end">
+            <input type="hidden" name="eventId" value={event.id} />
+            <div className="flex-1">
+              <select name="recipeId" required className="input">
+                <option value="">{t("addToMenu")}</option>
+                {availableRecipes.map((recipe) => (
+                  <option key={recipe.id} value={recipe.id}>
+                    {recipe.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="btn-primary text-sm">
+              {tc("add")}
+            </button>
+          </form>
+        )}
+      </div>
+
+      {/* Shopping list */}
+      <div className="card space-y-4">
+        <h3 className="font-heading text-lg text-accent-gold">
+          {t("shoppingList")}
+        </h3>
+        {shoppingList.length === 0 ? (
+          <p className="text-text-muted text-sm">{t("shoppingListEmpty")}</p>
+        ) : (
+          <div className="space-y-2">
+            <div className="grid grid-cols-4 gap-2 text-xs font-semibold text-text-muted uppercase tracking-wider pb-2 border-b border-border-gold">
+              <span>{tc("noResults") === "No results" ? "Item" : "原料"}</span>
+              <span className="text-right">{t("needed")}</span>
+              <span className="text-right">{t("onHand")}</span>
+              <span className="text-right">{t("toBuy")}</span>
+            </div>
+            {shoppingList.map((item) => (
+              <div
+                key={item.ingredientId}
+                className="grid grid-cols-4 gap-2 text-sm py-1 border-b border-border-gold/50"
+              >
+                <span className="text-text-primary">
+                  {item.ingredientName}
+                </span>
+                <span className="text-right text-text-secondary">
+                  {item.needed.toFixed(1)} {item.unit}
+                </span>
+                <span className="text-right text-text-secondary">
+                  {item.onHand.toFixed(1)}
+                </span>
+                <span className="text-right text-accent-gold font-semibold">
+                  {item.toBuy.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
