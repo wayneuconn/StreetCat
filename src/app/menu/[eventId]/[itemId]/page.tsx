@@ -54,13 +54,13 @@ export default async function CocktailDetailPage({
         <div className="card animate-fade-up overflow-hidden">
           {recipe.imageUrl && (
             <div
-              className="w-full aspect-[3/2] -mx-[1.25rem] -mt-[1.25rem] mb-4 overflow-hidden"
+              className="w-full aspect-square -mx-[1.25rem] -mt-[1.25rem] mb-4 overflow-hidden bg-bg-secondary/50 flex items-center justify-center"
               style={{ width: "calc(100% + 2.5rem)" }}
             >
               <img
                 src={recipe.imageUrl}
                 alt={recipe.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
           )}

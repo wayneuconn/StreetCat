@@ -85,11 +85,13 @@ export default async function EventMenuPage({
                     className={`block w-2/5 flex-shrink-0 ${isSoldOut ? "opacity-40 grayscale" : ""}`}
                   >
                     {item.recipe.imageUrl ? (
-                      <img
-                        src={item.recipe.imageUrl}
-                        alt={item.recipe.name}
-                        className="w-full aspect-square object-cover rounded-lg"
-                      />
+                      <div className="w-full aspect-square rounded-lg bg-bg-secondary/50 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={item.recipe.imageUrl}
+                          alt={item.recipe.name}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
                     ) : (
                       <div className="w-full aspect-square rounded-lg bg-border-gold/10 flex items-center justify-center">
                         <span className="text-3xl text-text-muted/30">🍸</span>
