@@ -47,7 +47,7 @@
     "abv": "酒精度 ",
     "price": "价格",
     "orderThis": "点这杯",
-    "unavailable": "已售罄"
+    "unavailable": "Out of Stock"
   },
   "order": {
     "title": "下单",

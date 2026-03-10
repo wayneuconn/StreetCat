@@ -115,14 +115,7 @@ export default async function CocktailDetailPage({
           />
         ) : (
           <div className="text-center py-3 text-accent-burgundy text-sm">
-            {(() => {
-              const depleted = recipe.recipeIngredients
-                .filter((ri) => ri.ingredient.quantityOnHand <= 0)
-                .map((ri) => ri.ingredient.name);
-              return depleted.length > 0
-                ? `out of ${depleted.join(", ")}`
-                : t("unavailable");
-            })()}
+            {t("unavailable")}
           </div>
         )}
       </div>

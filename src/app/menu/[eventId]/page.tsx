@@ -35,21 +35,7 @@ export default async function EventMenuPage({
     );
   }
 
-  // Compute sold-out reason per menu item (which ingredient is depleted)
-  const soldOutReasons = new Map<string, string>();
-  for (const item of event.menuItems) {
-    if (!item.available) {
-      const depleted = item.recipe.recipeIngredients
-        .filter((ri) => ri.ingredient.quantityOnHand <= 0)
-        .map((ri) => ri.ingredient.name);
-      soldOutReasons.set(
-        item.id,
-        depleted.length > 0 ? depleted.join(", ") : ""
-      );
-    }
-  }
-
-  // Group by flavor category (include all items)
+  // Group by flavor category (include all items, sold-out ones shown dimmed)
   const allItems = event.menuItems;
   const grouped = new Map<string, typeof allItems>();
   for (const item of allItems) {
@@ -92,7 +78,6 @@ export default async function EventMenuPage({
                 const isImageLeft = globalIndex % 2 === 0;
                 globalIndex++;
                 const isSoldOut = !item.available;
-                const soldOutReason = soldOutReasons.get(item.id);
 
                 const imageBlock = (
                   <Link
@@ -138,9 +123,7 @@ export default async function EventMenuPage({
                     <div className="mt-2">
                       {isSoldOut ? (
                         <span className="text-xs text-accent-burgundy">
-                          {soldOutReason
-                            ? `out of ${soldOutReason}`
-                            : t("unavailable")}
+                          {t("unavailable")}
                         </span>
                       ) : (
                         <QuickAddButton

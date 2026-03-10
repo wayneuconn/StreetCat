@@ -47,7 +47,7 @@
     "abv": "Strength ",
     "price": "Price",
     "orderThis": "Order This",
-    "unavailable": "Sold Out"
+    "unavailable": "Out of Stock"
   },
   "order": {
     "title": "Place Order",
