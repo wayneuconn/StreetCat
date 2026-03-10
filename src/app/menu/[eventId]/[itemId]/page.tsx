@@ -80,22 +80,14 @@ export default async function CocktailDetailPage({
             <span className="text-text-muted text-xs">~ ~ ~</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            {recipe.baseSpirit && (
-              <div>
-                <span className="text-text-muted">{t("baseSpirit")}</span>
-                <p className="mt-0.5 text-text-primary">{recipe.baseSpirit}</p>
-              </div>
-            )}
-            {recipe.abv != null && (
-              <div>
-                <span className="text-text-muted">{t("abv")}</span>
-                <p className="mt-0.5">
-                  <AbvStars level={recipe.abv} />
-                </p>
-              </div>
-            )}
-          </div>
+          {recipe.abv != null && (
+            <div className="text-sm">
+              <span className="text-text-muted">{t("abv")}</span>
+              <span className="ml-2">
+                <AbvStars level={recipe.abv} />
+              </span>
+            </div>
+          )}
 
           {recipe.characteristics && (
             <div className="mt-5 p-3 rounded-lg bg-bg-primary/50 border border-border-gold/50">

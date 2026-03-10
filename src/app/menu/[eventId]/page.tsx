@@ -3,7 +3,7 @@ import { GuestShell } from "@/components/layout/guest-shell";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { QuickAddButton } from "@/components/order/quick-add-button";
-import { SaveEvent } from "@/components/save-event";
+import { SaveEvent, ClearEventButton } from "@/components/save-event";
 import { ShareQR } from "@/components/share-qr";
 
 function AbvStars({ level }: { level: number }) {
@@ -29,6 +29,7 @@ export default async function EventMenuPage({
       <GuestShell>
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-text-muted text-lg">{t("eventEnded")}</p>
+          <ClearEventButton label={t("backHome")} />
         </div>
       </GuestShell>
     );
@@ -110,9 +111,6 @@ export default async function EventMenuPage({
                       </p>
                     )}
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-text-muted">
-                      {item.recipe.baseSpirit && (
-                        <span>{item.recipe.baseSpirit}</span>
-                      )}
                       {item.recipe.abv != null && (
                         <AbvStars level={item.recipe.abv} />
                       )}

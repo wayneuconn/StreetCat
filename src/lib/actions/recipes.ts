@@ -26,8 +26,6 @@ export async function createRecipe(formData: FormData) {
         | "collins"
         | "flute"
         | "nick-nora",
-      garnish: formData.get("garnish") as string,
-      baseSpirit: (formData.get("baseSpirit") as string) || null,
       flavor: (formData.get("flavor") as string) || null,
       characteristics: (formData.get("characteristics") as string) || null,
       abv: parseOptionalFloat(formData.get("abv")),
@@ -55,8 +53,6 @@ export async function updateRecipe(formData: FormData) {
         | "collins"
         | "flute"
         | "nick-nora",
-      garnish: formData.get("garnish") as string,
-      baseSpirit: (formData.get("baseSpirit") as string) || null,
       flavor: (formData.get("flavor") as string) || null,
       characteristics: (formData.get("characteristics") as string) || null,
       abv: parseOptionalFloat(formData.get("abv")),

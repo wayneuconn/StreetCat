@@ -99,36 +99,23 @@ export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe;
       </div>
 
       {/* Guest-facing fields */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            {t("baseSpirit")}
-          </label>
-          <input
-            name="baseSpirit"
-            defaultValue={recipe.baseSpirit || ""}
-            placeholder="e.g. Bourbon, Gin"
-            className="input"
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            {t("flavor")}
-          </label>
-          <input
-            name="flavor"
-            defaultValue={recipe.flavor || ""}
-            placeholder="e.g. 酸甜, 清爽"
-            className="input"
-            list="flavor-options"
-            autoComplete="off"
-          />
-          <datalist id="flavor-options">
-            {existingFlavors.map((f) => (
-              <option key={f} value={f} />
-            ))}
-          </datalist>
-        </div>
+      <div>
+        <label className="block text-sm text-text-secondary mb-1">
+          {t("flavor")}
+        </label>
+        <input
+          name="flavor"
+          defaultValue={recipe.flavor || ""}
+          placeholder="e.g. 酸甜, 清爽"
+          className="input"
+          list="flavor-options"
+          autoComplete="off"
+        />
+        <datalist id="flavor-options">
+          {existingFlavors.map((f) => (
+            <option key={f} value={f} />
+          ))}
+        </datalist>
       </div>
 
       <div>
@@ -192,34 +179,22 @@ export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe;
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            {t("glassType")}
-          </label>
-          <select
-            name="glassType"
-            className="input"
-            defaultValue={recipe.glassType || "rocks"}
-          >
-            <option value="rocks">Rocks</option>
-            <option value="coupe">Coupe</option>
-            <option value="highball">Highball</option>
-            <option value="collins">Collins</option>
-            <option value="flute">Flute</option>
-            <option value="nick-nora">Nick & Nora</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm text-text-secondary mb-1">
-            {t("garnish")}
-          </label>
-          <input
-            name="garnish"
-            defaultValue={recipe.garnish || ""}
-            className="input"
-          />
-        </div>
+      <div>
+        <label className="block text-sm text-text-secondary mb-1">
+          {t("glassType")}
+        </label>
+        <select
+          name="glassType"
+          className="input"
+          defaultValue={recipe.glassType || "rocks"}
+        >
+          <option value="rocks">Rocks</option>
+          <option value="coupe">Coupe</option>
+          <option value="highball">Highball</option>
+          <option value="collins">Collins</option>
+          <option value="flute">Flute</option>
+          <option value="nick-nora">Nick & Nora</option>
+        </select>
       </div>
 
       <button type="submit" className="btn-primary text-sm">
