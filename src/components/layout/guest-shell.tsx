@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { LanguageSwitcher } from "./language-switcher";
 import { CartBar } from "@/components/order/cart-bar";
 
 export function GuestShell({ children }: { children: React.ReactNode }) {
@@ -15,7 +14,6 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
           <Link href="/" className="font-heading text-lg font-bold text-accent-gold">
             {t("common.appName")}
           </Link>
-          <LanguageSwitcher />
         </div>
       </header>
       <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6 pb-24">

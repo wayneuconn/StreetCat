@@ -8,13 +8,10 @@ export default function Home() {
   const t = useTranslations("home");
   const router = useRouter();
   const [code, setCode] = useState("");
-  const [error, setError] = useState(false);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = code.trim();
     if (!trimmed) return;
-    setError(false);
     router.push(`/menu/${trimmed}`);
   };
 
@@ -33,10 +30,7 @@ export default function Home() {
           <input
             type="text"
             value={code}
-            onChange={(e) => {
-              setCode(e.target.value);
-              setError(false);
-            }}
+            onChange={(e) => setCode(e.target.value)}
             placeholder={t("codePlaceholder")}
             className="input w-full text-center tracking-widest"
           />

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { LanguageSwitcher } from "./language-switcher";
 import { logoutAction } from "@/lib/actions/auth";
 
 const adminLinks = [
@@ -26,7 +25,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             {t("common.appName")}
           </Link>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher />
             <form action={logoutAction}>
               <button
                 type="submit"
