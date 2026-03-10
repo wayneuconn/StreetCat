@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { QuickAddButton } from "@/components/order/quick-add-button";
 import { SaveEvent } from "@/components/save-event";
+import { ShareQR } from "@/components/share-qr";
 
 function AbvStars({ level }: { level: number }) {
   return (
@@ -53,11 +54,14 @@ export default async function EventMenuPage({
     <GuestShell>
       <SaveEvent eventId={eventId} />
       <div className="space-y-10">
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <h1 className="font-heading text-3xl font-bold text-accent-gold">
             {event.name}
           </h1>
-          <p className="mt-1 text-text-secondary">{t("subtitle")}</p>
+          <p className="text-text-secondary">{t("subtitle")}</p>
+          <div className="flex justify-center">
+            <ShareQR eventId={eventId} eventName={event.name} />
+          </div>
         </div>
 
         {categories.map((category) => {

@@ -3,6 +3,14 @@
     "codePlaceholder": "Enter invite code",
     "enter": "Enter"
   },
+  "share": {
+    "share": "Share",
+    "scanToJoin": "Scan to join the party",
+    "shareText": "Join my party!",
+    "saveImage": "Save Image",
+    "shareImage": "Share",
+    "close": "Close"
+  },
   "common": {
     "appName": "StreetCat Bar",
     "loading": "Loading...",

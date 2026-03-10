@@ -3,6 +3,14 @@
     "codePlaceholder": "输入邀请码",
     "enter": "进入"
   },
+  "share": {
+    "share": "分享",
+    "scanToJoin": "扫码加入派对",
+    "shareText": "来参加我的派对吧！",
+    "saveImage": "保存图片",
+    "shareImage": "分享",
+    "close": "关闭"
+  },
   "common": {
     "appName": "街猫酒吧",
     "loading": "加载中...",
