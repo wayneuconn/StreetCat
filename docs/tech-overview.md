@@ -22,11 +22,11 @@
 └──────────────┬──────────────────────────┬───────────────────┘
                │                          │
      ┌─────────▼────────┐     ┌──────────▼──────────┐
-     │  Cloud SQL        │     │  Cloud Storage       │
-     │  PostgreSQL 15    │     │  streetcat-images-    │
-     │  db-f1-micro      │     │  489803               │
-     │  10 GB SSD        │     │  Public read          │
-     │  (via Unix socket)│     │  (cocktail images)    │
+     │  Neon (PostgreSQL)│     │  Cloud Storage       │
+     │  Serverless       │     │  streetcat-images-    │
+     │  Free tier        │     │  489803               │
+     │  Auto-suspend 5m  │     │  Public read          │
+     │  us-east-1 (AWS)  │     │  (cocktail images)    │
      └──────────────────┘     └─────────────────────┘
 
      ┌──────────────────┐
@@ -44,7 +44,7 @@
 | Framework | Next.js (App Router, Server Actions) | 15.x |
 | Language | TypeScript | 5.x |
 | Styling | Tailwind CSS | 4.x |
-| Database | PostgreSQL via Cloud SQL | 15 |
+| Database | PostgreSQL via Neon (serverless) | 17 |
 | ORM | Drizzle ORM | 0.38.x |
 | Real-time | Server-Sent Events (SSE) | Native |
 | i18n | next-intl | 4.x |
@@ -69,6 +69,9 @@ ingredients ──┐
 
 All IDs use CUID2. Cascade deletes on foreign keys.
 
+**Recipe fields** (guest-facing): name, description, baseSpirit, flavor, characteristics, abv, price, imageUrl
+**Recipe fields** (bartender-only): instructions, glassType, garnish
+
 ## Key Flows
 
 **Guest**: `/menu` → `/menu/[itemId]` → `/order` → `/order/[orderId]/status` (polls every 5s)
@@ -78,6 +81,8 @@ All IDs use CUID2. Cascade deletes on foreign keys.
 **Order real-time**: Guest places order → server action → DB insert → EventEmitter → SSE push → admin queue refreshes
 
 **Shopping list**: For each menu item recipe, sum (ingredient amount × expected guests) − inventory on hand. Group by category.
+
+**Guest name**: Persisted in localStorage so guests don't re-enter it between orders.
 
 ## Secrets & Auth
 
@@ -101,53 +106,50 @@ push to main
     → gcloud run deploy (tagged with git SHA)
 ```
 
-No manual deploy needed. Merge PR → auto-deploy in ~3 minutes.
+No manual deploy needed. Merge PR → auto-deploy in ~2 minutes.
 
 ---
 
 ## Cost Breakdown (Monthly Estimates)
 
-### Scenario: Party Scale (2–4 events/month, ~50 guests each)
+### Scenario: Party Scale (1–2 events/month, 10–30 guests each)
 
 | Service | Spec | Monthly Cost | Notes |
 |---------|------|-------------|-------|
-| **Cloud SQL** | db-f1-micro, 10 GB SSD | **~$9.37** | Shared-core (0.6 GB RAM). Runs 24/7. Cheapest managed PG option. |
-| **Cloud Run** | 512 MB, 1 vCPU, min=0 | **~$0–2** | Scale-to-zero. Only billed when handling requests. Free tier covers 2M requests/month. |
-| **Artifact Registry** | Docker images | **~$0.10** | $0.10/GB storage. One image ~150 MB. |
-| **Cloud Storage** | Cocktail images | **~$0.01** | A few MB of images. $0.020/GB/month + negligible egress. |
-| **Secret Manager** | 2 secrets | **~$0** | Free tier covers 10,000 access operations/month. |
-| **GitHub Actions** | ~3 min/deploy | **~$0** | 2,000 free minutes/month for public repos (or private with free tier). |
+| **Neon** | Free tier, serverless PostgreSQL | **$0** | 0.5 GB storage, 190 compute hours. Auto-suspends after 5 min idle. |
+| **Cloud Run** | 512 MB, 1 vCPU, min=0 | **$0** | Scale-to-zero. Free tier covers 2M requests/month. |
+| **Artifact Registry** | Docker images | **~$0.02** | $0.10/GB storage. One image ~150 MB. |
+| **Cloud Storage** | Cocktail images | **~$0.01** | A few MB of images. $0.020/GB/month. |
+| **Secret Manager** | 2 secrets | **$0** | Free tier: 10,000 access operations/month. |
+| **GitHub Actions** | ~2 min/deploy | **$0** | 2,000 free minutes/month. |
 | | | | |
-| **Total** | | **~$10–12/month** | |
+| **Total** | | **~$0/month** | Everything within free tiers |
 
-### Cost Drivers & Optimization
+### Why Neon over Cloud SQL
 
-**Cloud SQL is 80%+ of the cost.** Options to reduce:
+| | Cloud SQL (db-f1-micro) | Neon (free tier) |
+|---|---|---|
+| Cost | ~$9.37/mo | $0/mo |
+| Always-on | Yes (24/7) | No (auto-suspends after 5 min idle) |
+| Cold start | None | ~0.5s on first query after suspend |
+| Storage | 10 GB SSD | 0.5 GB (plenty for party data) |
+| Good for | Production apps needing constant uptime | Low-traffic apps with bursty usage |
 
-| Option | Cost | Trade-off |
-|--------|------|-----------|
-| Keep db-f1-micro (current) | ~$9/mo | Simplest, always available |
-| Stop instance between events | ~$2–4/mo | Manual start/stop, ~1 min cold start |
-| Switch to Neon/Supabase free tier | $0 | External dependency, possible cold starts |
-| SQLite on Cloud Run volume | $0 | No managed backups, single instance only |
-
-**Cloud Run** is essentially free at party scale due to:
-- Scale-to-zero (min instances = 0)
-- Free tier: 180,000 vCPU-seconds + 360,000 GB-seconds/month
-- Party traffic (~200 requests/event) is well within free tier
+Cloud SQL was 80%+ of cost. For 1–2 events/month, Neon's cold start is negligible and the savings are significant.
 
 ### Scaling Cost (if StreetCat grows)
 
-| Scale | Cloud SQL | Cloud Run | Total |
-|-------|-----------|-----------|-------|
-| 2–4 parties/month | db-f1-micro | min=0, max=2 | ~$10/mo |
-| Weekly events, 100+ guests | db-g1-small ($26/mo) | min=1, max=4 | ~$40/mo |
-| Daily bar operations | db-custom-1-3840 ($50/mo) | min=1, max=10 | ~$80/mo |
+| Scale | Database | Cloud Run | Total |
+|-------|----------|-----------|-------|
+| 1–2 parties/month, 10–30 guests | Neon free | min=0, max=2 | ~$0/mo |
+| Weekly events, 50+ guests | Neon Launch ($19/mo) | min=0, max=4 | ~$19/mo |
+| Daily bar operations | Neon Scale ($69/mo) | min=1, max=10 | ~$80/mo |
 
 ### Free Tier Summary (what you get for $0)
 
-- Cloud Run: 2M requests, 180k vCPU-sec, 360k GB-sec per month
-- Cloud Storage: 5 GB, 50k reads, 5k writes per month
-- Secret Manager: 6 active secrets, 10k accesses per month
-- Artifact Registry: 0.5 GB storage
-- GitHub Actions: 2,000 minutes/month
+- **Neon**: 0.5 GB storage, 190 compute hours/month, auto-suspend
+- **Cloud Run**: 2M requests, 180k vCPU-sec, 360k GB-sec/month
+- **Cloud Storage**: 5 GB, 50k reads, 5k writes/month
+- **Secret Manager**: 6 active secrets, 10k accesses/month
+- **Artifact Registry**: 0.5 GB storage
+- **GitHub Actions**: 2,000 minutes/month
