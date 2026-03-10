@@ -35,11 +35,24 @@ export default async function EventMenuPage({
     );
   }
 
-  const availableItems = event.menuItems.filter((item) => item.available);
+  // Compute sold-out reason per menu item (which ingredient is depleted)
+  const soldOutReasons = new Map<string, string>();
+  for (const item of event.menuItems) {
+    if (!item.available) {
+      const depleted = item.recipe.recipeIngredients
+        .filter((ri) => ri.ingredient.quantityOnHand <= 0)
+        .map((ri) => ri.ingredient.name);
+      soldOutReasons.set(
+        item.id,
+        depleted.length > 0 ? depleted.join(", ") : ""
+      );
+    }
+  }
 
-  // Group by flavor category
-  const grouped = new Map<string, typeof availableItems>();
-  for (const item of availableItems) {
+  // Group by flavor category (include all items)
+  const allItems = event.menuItems;
+  const grouped = new Map<string, typeof allItems>();
+  for (const item of allItems) {
     const category = item.recipe.flavor || "其他";
     const list = grouped.get(category) || [];
     list.push(item);
@@ -78,11 +91,13 @@ export default async function EventMenuPage({
               {items.map((item) => {
                 const isImageLeft = globalIndex % 2 === 0;
                 globalIndex++;
+                const isSoldOut = !item.available;
+                const soldOutReason = soldOutReasons.get(item.id);
 
                 const imageBlock = (
                   <Link
                     href={`/menu/${eventId}/${item.id}`}
-                    className="block w-2/5 flex-shrink-0"
+                    className={`block w-2/5 flex-shrink-0 ${isSoldOut ? "opacity-40 grayscale" : ""}`}
                   >
                     {item.recipe.imageUrl ? (
                       <img
@@ -99,9 +114,9 @@ export default async function EventMenuPage({
                 );
 
                 const textBlock = (
-                  <div className="flex-1 flex flex-col justify-center min-w-0">
+                  <div className={`flex-1 flex flex-col justify-center min-w-0 ${isSoldOut ? "opacity-60" : ""}`}>
                     <Link href={`/menu/${eventId}/${item.id}`}>
-                      <h2 className="font-heading text-lg font-semibold text-accent-gold leading-tight">
+                      <h2 className={`font-heading text-lg font-semibold leading-tight ${isSoldOut ? "text-text-muted" : "text-accent-gold"}`}>
                         {item.recipe.name}
                       </h2>
                     </Link>
@@ -121,11 +136,19 @@ export default async function EventMenuPage({
                       )}
                     </div>
                     <div className="mt-2">
-                      <QuickAddButton
-                        menuItemId={item.id}
-                        name={item.recipe.name}
-                        eventId={eventId}
-                      />
+                      {isSoldOut ? (
+                        <span className="text-xs text-accent-burgundy">
+                          {soldOutReason
+                            ? `out of ${soldOutReason}`
+                            : t("unavailable")}
+                        </span>
+                      ) : (
+                        <QuickAddButton
+                          menuItemId={item.id}
+                          name={item.recipe.name}
+                          eventId={eventId}
+                        />
+                      )}
                     </div>
                   </div>
                 );

@@ -14,7 +14,15 @@ export async function getEvent(id: string) {
     with: {
       menuItems: {
         with: {
-          recipe: true,
+          recipe: {
+            with: {
+              recipeIngredients: {
+                with: {
+                  ingredient: true,
+                },
+              },
+            },
+          },
         },
         orderBy: [eventMenuItems.sortOrder],
       },

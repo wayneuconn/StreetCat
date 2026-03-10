@@ -27,7 +27,13 @@ export default async function CocktailDetailPage({
   const menuItem = await db.query.eventMenuItems.findFirst({
     where: eq(eventMenuItems.id, itemId),
     with: {
-      recipe: true,
+      recipe: {
+        with: {
+          recipeIngredients: {
+            with: { ingredient: true },
+          },
+        },
+      },
     },
   });
 
@@ -101,12 +107,23 @@ export default async function CocktailDetailPage({
           )}
         </div>
 
-        {menuItem.available && (
+        {menuItem.available ? (
           <AddToCartButton
             menuItemId={menuItem.id}
             name={recipe.name}
             eventId={eventId}
           />
+        ) : (
+          <div className="text-center py-3 text-accent-burgundy text-sm">
+            {(() => {
+              const depleted = recipe.recipeIngredients
+                .filter((ri) => ri.ingredient.quantityOnHand <= 0)
+                .map((ri) => ri.ingredient.name);
+              return depleted.length > 0
+                ? `out of ${depleted.join(", ")}`
+                : t("unavailable");
+            })()}
+          </div>
         )}
       </div>
     </GuestShell>
