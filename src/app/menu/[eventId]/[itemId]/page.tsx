@@ -5,13 +5,23 @@ import { eventMenuItems } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { GuestShell } from "@/components/layout/guest-shell";
 import { getTranslations } from "next-intl/server";
+import { AddToCartButton } from "@/components/order/add-to-cart-button";
+
+function AbvStars({ level }: { level: number }) {
+  return (
+    <span className="text-accent-gold tracking-wider">
+      {"★".repeat(level)}
+      {"☆".repeat(5 - level)}
+    </span>
+  );
+}
 
 export default async function CocktailDetailPage({
   params,
 }: {
-  params: Promise<{ itemId: string }>;
+  params: Promise<{ eventId: string; itemId: string }>;
 }) {
-  const { itemId } = await params;
+  const { eventId, itemId } = await params;
   const t = await getTranslations("menu");
 
   const menuItem = await db.query.eventMenuItems.findFirst({
@@ -29,7 +39,7 @@ export default async function CocktailDetailPage({
     <GuestShell>
       <div className="space-y-6">
         <Link
-          href="/menu"
+          href={`/menu/${eventId}`}
           className="text-sm text-text-muted hover:text-accent-gold transition-colors"
         >
           &larr; {t("title")}
@@ -77,16 +87,12 @@ export default async function CocktailDetailPage({
                 <p className="mt-0.5 text-text-primary">{recipe.baseSpirit}</p>
               </div>
             )}
-            {recipe.flavor && (
-              <div>
-                <span className="text-text-muted">{t("flavor")}</span>
-                <p className="mt-0.5 text-text-primary">{recipe.flavor}</p>
-              </div>
-            )}
             {recipe.abv != null && (
               <div>
                 <span className="text-text-muted">{t("abv")}</span>
-                <p className="mt-0.5 text-text-primary">{recipe.abv}%</p>
+                <p className="mt-0.5">
+                  <AbvStars level={recipe.abv} />
+                </p>
               </div>
             )}
           </div>
@@ -104,11 +110,11 @@ export default async function CocktailDetailPage({
         </div>
 
         {menuItem.available && (
-          <div className="text-center">
-            <Link href="/order" className="btn-primary inline-block">
-              {t("orderThis")}
-            </Link>
-          </div>
+          <AddToCartButton
+            menuItemId={menuItem.id}
+            name={recipe.name}
+            eventId={eventId}
+          />
         )}
       </div>
     </GuestShell>

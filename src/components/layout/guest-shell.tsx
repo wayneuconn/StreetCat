@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./language-switcher";
+import { CartBar } from "@/components/order/cart-bar";
 
 export function GuestShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations();
@@ -22,20 +23,15 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
               >
                 {t("nav.menu")}
               </Link>
-              <Link
-                href="/order"
-                className="text-text-secondary hover:text-accent-gold transition-colors"
-              >
-                {t("nav.order")}
-              </Link>
             </nav>
             <LanguageSwitcher />
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6">
+      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6 pb-24">
         {children}
       </main>
+      <CartBar />
     </div>
   );
 }

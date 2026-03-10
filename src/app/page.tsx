@@ -9,7 +9,7 @@ export default async function Home() {
   });
 
   if (activeEvent) {
-    redirect("/menu");
+    redirect(`/menu/${activeEvent.id}`);
   }
 
   return (
