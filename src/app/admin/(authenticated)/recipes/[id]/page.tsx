@@ -9,6 +9,12 @@ import {
 import { RecipeEditor } from "@/components/recipe/recipe-editor";
 import Link from "next/link";
 
+const CATEGORY_ORDER = ["spirit", "liqueur", "juice", "mixer", "garnish", "bitter", "other"] as const;
+const CATEGORY_LABELS: Record<string, string> = {
+  spirit: "基酒", liqueur: "利口酒", juice: "果汁", mixer: "调配料",
+  garnish: "装饰", bitter: "苦精", other: "其他",
+};
+
 export default async function RecipeEditorPage({
   params,
 }: {
@@ -86,11 +92,19 @@ export default async function RecipeEditorPage({
           <div className="flex-1 min-w-[140px]">
             <select name="ingredientId" required className="input">
               <option value="">{t("addIngredient")}</option>
-              {allIngredients.map((ing) => (
-                <option key={ing.id} value={ing.id}>
-                  {ing.name}
-                </option>
-              ))}
+              {CATEGORY_ORDER
+                .filter((cat) => allIngredients.some((ing) => ing.category === cat))
+                .map((cat) => (
+                  <optgroup key={cat} label={CATEGORY_LABELS[cat] || cat}>
+                    {allIngredients
+                      .filter((ing) => ing.category === cat)
+                      .map((ing) => (
+                        <option key={ing.id} value={ing.id}>
+                          {ing.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
             </select>
           </div>
           <div className="w-20">
