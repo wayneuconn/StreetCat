@@ -44,6 +44,8 @@ export function IngredientTable({
                   className="input"
                 >
                   <option value="spirit">{t("categories.spirit")}</option>
+                  <option value="liqueur">{t("categories.liqueur")}</option>
+                  <option value="juice">{t("categories.juice")}</option>
                   <option value="mixer">{t("categories.mixer")}</option>
                   <option value="garnish">{t("categories.garnish")}</option>
                   <option value="bitter">{t("categories.bitter")}</option>

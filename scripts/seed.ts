@@ -33,21 +33,27 @@ async function seed() {
     { name: "Campari", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 16 },
     { name: "Sweet Vermouth", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 16 },
     { name: "Dry Vermouth", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Cointreau", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Blue Curaçao", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Midori", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Baileys", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Blackcurrant Liqueur", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Seedlip 108", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 8 },
-    { name: "Seedlip 94", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 8 },
+  ];
+
+  const liqueurs = [
+    { name: "Cointreau", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Blue Curaçao", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Midori", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Baileys", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Blackcurrant Liqueur", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Seedlip 108", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 8 },
+    { name: "Seedlip 94", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 8 },
+  ];
+
+  const juices = [
+    { name: "Fresh Lime Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Fresh Lemon Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 12 },
+    { name: "Orange Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 24 },
+    { name: "Cranberry Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 16 },
   ];
 
   const mixers = [
     { name: "Simple Syrup", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 16 },
-    { name: "Fresh Lime Juice", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Fresh Lemon Juice", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Orange Juice", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 24 },
-    { name: "Cranberry Juice", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 16 },
     { name: "Soda Water", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 64 },
     { name: "Tonic Water", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 48 },
     { name: "Ginger Beer", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 32 },
@@ -75,7 +81,7 @@ async function seed() {
     { name: "Cocoa Powder", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 10 },
   ];
 
-  const allIngredients = [...spirits, ...mixers, ...bitters, ...garnishes];
+  const allIngredients = [...spirits, ...liqueurs, ...juices, ...mixers, ...bitters, ...garnishes];
   const inserted = await db
     .insert(schema.ingredients)
     .values(allIngredients)

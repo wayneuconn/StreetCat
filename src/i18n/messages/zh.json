@@ -104,6 +104,8 @@
       "unit": "单位",
       "categories": {
         "spirit": "基酒",
+        "liqueur": "利口酒",
+        "juice": "果汁",
         "mixer": "调配料",
         "garnish": "装饰物",
         "bitter": "苦精",

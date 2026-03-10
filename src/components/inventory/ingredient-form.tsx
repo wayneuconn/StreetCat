@@ -4,6 +4,16 @@ import { useTranslations } from "next-intl";
 import { createIngredient } from "@/lib/actions/inventory";
 import { useRef } from "react";
 
+const CATEGORY_GROUPS = [
+  { label: "spirit", values: ["spirit"] },
+  { label: "liqueur", values: ["liqueur"] },
+  { label: "juice", values: ["juice"] },
+  { label: "mixer", values: ["mixer"] },
+  { label: "garnish", values: ["garnish"] },
+  { label: "bitter", values: ["bitter"] },
+  { label: "other", values: ["other"] },
+];
+
 export function IngredientForm() {
   const t = useTranslations("admin.inventory");
   const formRef = useRef<HTMLFormElement>(null);
@@ -28,11 +38,11 @@ export function IngredientForm() {
           className="input col-span-2 sm:col-span-1"
         />
         <select name="category" className="input" defaultValue="other">
-          <option value="spirit">{t("categories.spirit")}</option>
-          <option value="mixer">{t("categories.mixer")}</option>
-          <option value="garnish">{t("categories.garnish")}</option>
-          <option value="bitter">{t("categories.bitter")}</option>
-          <option value="other">{t("categories.other")}</option>
+          {CATEGORY_GROUPS.map((g) => (
+            <option key={g.label} value={g.label}>
+              {t(`categories.${g.label}`)}
+            </option>
+          ))}
         </select>
         <input
           name="quantityOnHand"

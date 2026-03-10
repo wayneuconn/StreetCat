@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 export async function createIngredient(formData: FormData) {
   await db.insert(ingredients).values({
     name: formData.get("name") as string,
-    category: formData.get("category") as "spirit" | "mixer" | "garnish" | "bitter" | "other",
+    category: formData.get("category") as "spirit" | "liqueur" | "juice" | "mixer" | "garnish" | "bitter" | "other",
     quantityOnHand: parseFloat(formData.get("quantityOnHand") as string) || 0,
     unit: formData.get("unit") as "oz" | "ml" | "dash" | "piece" | "bottle",
   });
@@ -21,7 +21,7 @@ export async function updateIngredient(formData: FormData) {
     .update(ingredients)
     .set({
       name: formData.get("name") as string,
-      category: formData.get("category") as "spirit" | "mixer" | "garnish" | "bitter" | "other",
+      category: formData.get("category") as "spirit" | "liqueur" | "juice" | "mixer" | "garnish" | "bitter" | "other",
       quantityOnHand: parseFloat(formData.get("quantityOnHand") as string) || 0,
       unit: formData.get("unit") as "oz" | "ml" | "dash" | "piece" | "bottle",
       updatedAt: new Date(),

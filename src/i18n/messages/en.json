@@ -104,6 +104,8 @@
       "unit": "Unit",
       "categories": {
         "spirit": "Spirit",
+        "liqueur": "Liqueur",
+        "juice": "Juice",
         "mixer": "Mixer",
         "garnish": "Garnish",
         "bitter": "Bitter",

@@ -12,6 +12,8 @@ import { createId } from "@paralleldrive/cuid2";
 
 export const ingredientCategory = pgEnum("ingredient_category", [
   "spirit",
+  "liqueur",
+  "juice",
   "mixer",
   "garnish",
   "bitter",
@@ -52,6 +54,7 @@ export const ingredients = pgTable("ingredients", {
   category: ingredientCategory("category").notNull().default("other"),
   quantityOnHand: real("quantity_on_hand").notNull().default(0),
   unit: unitEnum("unit").notNull().default("oz"),
+  imageUrl: text("image_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
