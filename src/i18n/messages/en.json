@@ -1,4 +1,8 @@
 {
+  "home": {
+    "codePlaceholder": "Enter invite code",
+    "enter": "Enter"
+  },
   "common": {
     "appName": "StreetCat Bar",
     "loading": "Loading...",

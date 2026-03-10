@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { getEvent } from "@/lib/queries/events";
 import { GuestShell } from "@/components/layout/guest-shell";
 import { getTranslations } from "next-intl/server";
@@ -35,7 +34,7 @@ export default async function EventMenuPage({
 
   const availableItems = event.menuItems.filter((item) => item.available);
 
-  // Group by flavor category (dynamic, preserves data order)
+  // Group by flavor category
   const grouped = new Map<string, typeof availableItems>();
   for (const item of availableItems) {
     const category = item.recipe.flavor || "其他";
@@ -46,9 +45,12 @@ export default async function EventMenuPage({
 
   const categories = [...grouped.keys()];
 
+  // Track global index for alternating layout
+  let globalIndex = 0;
+
   return (
     <GuestShell>
-      <div className="space-y-6">
+      <div className="space-y-10">
         <div className="text-center">
           <h1 className="font-heading text-3xl font-bold text-accent-gold">
             {event.name}
@@ -56,72 +58,96 @@ export default async function EventMenuPage({
           <p className="mt-1 text-text-secondary">{t("subtitle")}</p>
         </div>
 
-        {categories.map((category) => (
-          <div key={category} className="space-y-4">
-            <div className="divider my-4">
-              <span className="font-heading text-lg text-accent-gold tracking-wider">
-                {category}
-              </span>
-            </div>
+        {categories.map((category) => {
+          const items = grouped.get(category)!;
+          return (
+            <div key={category} className="space-y-8">
+              <div className="divider my-4">
+                <span className="font-heading text-lg text-accent-gold tracking-wider">
+                  {category}
+                </span>
+              </div>
 
-            {grouped.get(category)!.map((item, i) => (
-              <Link
-                key={item.id}
-                href={`/menu/${eventId}/${item.id}`}
-                className={`card card-hover block animate-fade-up stagger-${Math.min(i + 1, 6)} overflow-hidden`}
-              >
-                {item.recipe.imageUrl && (
-                  <div
-                    className="w-full aspect-[3/2] -mx-[1.25rem] -mt-[1.25rem] mb-3 overflow-hidden"
-                    style={{ width: "calc(100% + 2.5rem)" }}
+              {items.map((item) => {
+                const isImageLeft = globalIndex % 2 === 0;
+                globalIndex++;
+
+                const imageBlock = (
+                  <Link
+                    href={`/menu/${eventId}/${item.id}`}
+                    className="block w-2/5 flex-shrink-0"
                   >
-                    <img
-                      src={item.recipe.imageUrl}
-                      alt={item.recipe.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <h2 className="font-heading text-xl font-semibold text-accent-gold">
-                      {item.recipe.name}
-                    </h2>
+                    {item.recipe.imageUrl ? (
+                      <img
+                        src={item.recipe.imageUrl}
+                        alt={item.recipe.name}
+                        className="w-full aspect-square object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-full aspect-square rounded-lg bg-border-gold/10 flex items-center justify-center">
+                        <span className="text-3xl text-text-muted/30">🍸</span>
+                      </div>
+                    )}
+                  </Link>
+                );
+
+                const textBlock = (
+                  <div className="flex-1 flex flex-col justify-center min-w-0">
+                    <Link href={`/menu/${eventId}/${item.id}`}>
+                      <h2 className="font-heading text-lg font-semibold text-accent-gold leading-tight">
+                        {item.recipe.name}
+                      </h2>
+                    </Link>
                     {item.recipe.description && (
-                      <p className="mt-1 text-sm text-text-secondary line-clamp-2">
+                      <p className="mt-1.5 text-sm text-text-secondary line-clamp-2 leading-relaxed">
                         {item.recipe.description}
                       </p>
                     )}
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-muted">
+                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-text-muted">
                       {item.recipe.baseSpirit && (
-                        <span>
-                          {t("baseSpirit")}: {item.recipe.baseSpirit}
-                        </span>
+                        <span>{item.recipe.baseSpirit}</span>
                       )}
                       {item.recipe.abv != null && (
-                        <span>
-                          {t("abv")} <AbvStars level={item.recipe.abv} />
+                        <AbvStars level={item.recipe.abv} />
+                      )}
+                      {item.recipe.price != null && (
+                        <span className="text-accent-gold">
+                          ¥{item.recipe.price}
                         </span>
                       )}
                     </div>
+                    <div className="mt-2">
+                      <QuickAddButton
+                        menuItemId={item.id}
+                        name={item.recipe.name}
+                        eventId={eventId}
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2 ml-3">
-                    {item.recipe.price != null && (
-                      <span className="font-heading text-lg text-accent-gold whitespace-nowrap">
-                        ¥{item.recipe.price}
-                      </span>
+                );
+
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-start gap-4 animate-fade-up"
+                  >
+                    {isImageLeft ? (
+                      <>
+                        {imageBlock}
+                        {textBlock}
+                      </>
+                    ) : (
+                      <>
+                        {textBlock}
+                        {imageBlock}
+                      </>
                     )}
-                    <QuickAddButton
-                      menuItemId={item.id}
-                      name={item.recipe.name}
-                      eventId={eventId}
-                    />
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ))}
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </GuestShell>
   );

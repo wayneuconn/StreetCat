@@ -15,17 +15,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
           <Link href="/" className="font-heading text-lg font-bold text-accent-gold">
             {t("common.appName")}
           </Link>
-          <div className="flex items-center gap-3">
-            <nav className="flex gap-3 text-sm">
-              <Link
-                href="/menu"
-                className="text-text-secondary hover:text-accent-gold transition-colors"
-              >
-                {t("nav.menu")}
-              </Link>
-            </nav>
-            <LanguageSwitcher />
-          </div>
+          <LanguageSwitcher />
         </div>
       </header>
       <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6 pb-24">

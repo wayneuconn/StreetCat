@@ -1,4 +1,8 @@
 {
+  "home": {
+    "codePlaceholder": "输入邀请码",
+    "enter": "进入"
+  },
   "common": {
     "appName": "街猫酒吧",
     "loading": "加载中...",
