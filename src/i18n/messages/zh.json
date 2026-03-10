@@ -1,0 +1,134 @@
+{
+  "common": {
+    "appName": "街猫酒吧",
+    "loading": "加载中...",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "back": "返回",
+    "confirm": "确认",
+    "search": "搜索",
+    "noResults": "暂无数据",
+    "actions": "操作"
+  },
+  "nav": {
+    "menu": "菜单",
+    "order": "点单",
+    "admin": "管理",
+    "dashboard": "仪表盘",
+    "queue": "订单队列",
+    "inventory": "库存管理",
+    "recipes": "配方管理",
+    "events": "活动管理",
+    "logout": "退出登录"
+  },
+  "menu": {
+    "title": "今日特调",
+    "subtitle": "精选鸡尾酒",
+    "noActiveEvent": "当前没有进行中的活动",
+    "baseSpirit": "基酒",
+    "flavor": "风味",
+    "characteristics": "特色",
+    "abv": "酒精度",
+    "price": "价格",
+    "orderThis": "点这杯",
+    "unavailable": "已售罄"
+  },
+  "order": {
+    "title": "下单",
+    "guestName": "您的名字",
+    "guestNamePlaceholder": "请输入名字",
+    "selectDrinks": "选择饮品",
+    "quantity": "数量",
+    "placeOrder": "确认下单",
+    "orderPlaced": "下单成功！",
+    "trackOrder": "追踪订单",
+    "status": {
+      "title": "订单状态",
+      "pending": "等待中",
+      "making": "制作中",
+      "ready": "已完成",
+      "picked_up": "已取走"
+    }
+  },
+  "admin": {
+    "login": {
+      "title": "管理员登录",
+      "password": "密码",
+      "passwordPlaceholder": "请输入管理密码",
+      "submit": "登录",
+      "error": "密码错误"
+    },
+    "dashboard": {
+      "title": "仪表盘",
+      "activeEvent": "当前活动",
+      "pendingOrders": "待处理订单",
+      "totalOrders": "总订单数",
+      "menuItems": "菜单项目"
+    },
+    "queue": {
+      "title": "订单队列",
+      "empty": "暂无订单",
+      "markMaking": "开始制作",
+      "markReady": "制作完成",
+      "markPickedUp": "已取走",
+      "recipe": "配方",
+      "guest": "客人"
+    },
+    "inventory": {
+      "title": "库存管理",
+      "addIngredient": "添加原料",
+      "editIngredient": "编辑原料",
+      "name": "名称",
+      "category": "分类",
+      "quantity": "数量",
+      "unit": "单位",
+      "categories": {
+        "spirit": "基酒",
+        "mixer": "调配料",
+        "garnish": "装饰物",
+        "bitter": "苦精",
+        "other": "其他"
+      }
+    },
+    "recipes": {
+      "title": "配方管理",
+      "addRecipe": "添加配方",
+      "editRecipe": "编辑配方",
+      "name": "名称",
+      "description": "描述",
+      "instructions": "制作步骤",
+      "glassType": "杯型",
+      "garnish": "装饰",
+      "ingredients": "配料",
+      "addIngredient": "添加配料",
+      "amount": "用量",
+      "baseSpirit": "基酒",
+      "flavor": "风味",
+      "characteristics": "特色",
+      "abv": "预计酒精度 (%)",
+      "price": "价格",
+      "image": "图片",
+      "uploadImage": "上传图片",
+      "changeImage": "更换图片"
+    },
+    "events": {
+      "title": "活动管理",
+      "addEvent": "创建活动",
+      "editEvent": "编辑活动",
+      "name": "活动名称",
+      "date": "日期",
+      "expectedGuests": "预计人数",
+      "isActive": "进行中",
+      "menuBuilder": "菜单编辑",
+      "addToMenu": "添加到菜单",
+      "shoppingList": "采购清单",
+      "shoppingListEmpty": "不需要额外采购",
+      "needed": "需要",
+      "onHand": "库存",
+      "toBuy": "待购"
+    }
+  }
+}
