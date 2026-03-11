@@ -6,11 +6,11 @@ import { QuickAddButton } from "@/components/order/quick-add-button";
 import { SaveEvent, ClearEventButton } from "@/components/save-event";
 import { ShareQR } from "@/components/share-qr";
 
-function AbvStars({ level }: { level: number }) {
+function AbvLevel({ level }: { level: number }) {
   return (
-    <span className="text-accent-gold tracking-wider">
-      {"★".repeat(level)}
-      {"☆".repeat(5 - level)}
+    <span className="tracking-wider">
+      <span className="text-text-muted text-[10px] mr-1">烈度</span>
+      {"🔥".repeat(level)}
     </span>
   );
 }
@@ -114,7 +114,7 @@ export default async function EventMenuPage({
                     )}
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-text-muted">
                       {item.recipe.abv != null && (
-                        <AbvStars level={item.recipe.abv} />
+                        <AbvLevel level={item.recipe.abv} />
                       )}
                       {item.recipe.price != null && (
                         <span className="text-accent-gold">

@@ -7,11 +7,11 @@ import { GuestShell } from "@/components/layout/guest-shell";
 import { getTranslations } from "next-intl/server";
 import { AddToCartButton } from "@/components/order/add-to-cart-button";
 
-function AbvStars({ level }: { level: number }) {
+function AbvLevel({ level }: { level: number }) {
   return (
-    <span className="text-accent-gold tracking-wider">
-      {"★".repeat(level)}
-      {"☆".repeat(5 - level)}
+    <span className="tracking-wider">
+      <span className="text-text-muted text-[10px] mr-1">烈度</span>
+      {"🔥".repeat(level)}
     </span>
   );
 }
@@ -90,7 +90,7 @@ export default async function CocktailDetailPage({
             <div className="text-sm">
               <span className="text-text-muted">{t("abv")}</span>
               <span className="ml-2">
-                <AbvStars level={recipe.abv} />
+                <AbvLevel level={recipe.abv} />
               </span>
             </div>
           )}
