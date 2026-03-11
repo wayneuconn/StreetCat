@@ -17,6 +17,27 @@ export type ShoppingItem = {
   unit: string;
 };
 
+/** Convert an amount from one unit to another. Returns the amount in targetUnit. */
+function convertUnit(amount: number, fromUnit: string, toUnit: string): number {
+  if (fromUnit === toUnit) return amount;
+
+  // Normalize to a base unit first, then convert to target
+  // Volume: base = oz
+  const toOz: Record<string, number> = {
+    oz: 1,
+    ml: 1 / 29.5735,
+    bottle: 25.36, // 750ml bottle
+  };
+
+  // If both are volume units, convert via oz
+  if (fromUnit in toOz && toUnit in toOz) {
+    return amount * toOz[fromUnit] / toOz[toUnit];
+  }
+
+  // dash, piece — no meaningful conversion, return as-is
+  return amount;
+}
+
 export async function calculateShoppingList(
   eventId: string
 ): Promise<ShoppingItem[]> {
@@ -55,7 +76,9 @@ export async function calculateShoppingList(
   for (const item of menuItems) {
     for (const ri of item.recipe.recipeIngredients) {
       const existing = needsMap.get(ri.ingredientId);
-      const amountNeeded = ri.amount * event.expectedGuests;
+      // Convert recipe amount to ingredient's storage unit
+      const convertedAmount = convertUnit(ri.amount, ri.unit, ri.ingredient.unit);
+      const amountNeeded = convertedAmount * event.expectedGuests;
       if (existing) {
         existing.needed += amountNeeded;
       } else {

@@ -13,6 +13,16 @@ import {
 import { eq, sql, and, inArray } from "drizzle-orm";
 import { emitOrderEvent } from "@/lib/events";
 
+/** Convert an amount from one unit to another (volume units via oz). */
+function convertUnit(amount: number, fromUnit: string, toUnit: string): number {
+  if (fromUnit === toUnit) return amount;
+  const toOz: Record<string, number> = { oz: 1, ml: 1 / 29.5735, bottle: 25.36 };
+  if (fromUnit in toOz && toUnit in toOz) {
+    return amount * toOz[fromUnit] / toOz[toUnit];
+  }
+  return amount;
+}
+
 type OrderItemInput = {
   menuItemId: string;
   quantity: number;
@@ -96,7 +106,9 @@ async function deductInventory(orderId: string, eventId: string) {
         with: {
           recipe: {
             with: {
-              recipeIngredients: true,
+              recipeIngredients: {
+                with: { ingredient: true },
+              },
             },
           },
         },
@@ -109,7 +121,8 @@ async function deductInventory(orderId: string, eventId: string) {
   for (const item of items) {
     for (const ri of item.menuItem.recipe.recipeIngredients) {
       const current = deductions.get(ri.ingredientId) || 0;
-      deductions.set(ri.ingredientId, current + ri.amount * item.quantity);
+      const converted = convertUnit(ri.amount, ri.unit, ri.ingredient.unit);
+      deductions.set(ri.ingredientId, current + converted * item.quantity);
     }
   }
 
