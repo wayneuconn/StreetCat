@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useRef } from "react";
-import { updateRecipe } from "@/lib/actions/recipes";
+import { updateRecipe, updateRecipeImage } from "@/lib/actions/recipes";
 import type { Recipe } from "@/lib/db/schema";
 
 export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe; existingFlavors?: string[] }) {
@@ -25,6 +25,8 @@ export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe;
       const data = await res.json();
       if (data.url) {
         setImageUrl(data.url);
+        // Auto-save image to database immediately
+        await updateRecipeImage(recipe.id, data.url);
       }
     } catch (err) {
       console.error("Upload failed:", err);
@@ -64,7 +66,10 @@ export function RecipeEditor({ recipe, existingFlavors = [] }: { recipe: Recipe;
           {imageUrl && (
             <button
               type="button"
-              onClick={() => setImageUrl("")}
+              onClick={async () => {
+                setImageUrl("");
+                await updateRecipeImage(recipe.id, null);
+              }}
               className="text-xs text-text-muted hover:text-accent-burgundy transition-colors"
             >
               {tc("delete")}

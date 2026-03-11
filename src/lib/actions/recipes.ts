@@ -63,7 +63,17 @@ export async function updateRecipe(formData: FormData) {
     .where(eq(recipes.id, id));
   revalidatePath(`/admin/recipes/${id}`);
   revalidatePath("/admin/recipes");
-  revalidatePath("/menu");
+  revalidatePath("/", "layout");
+}
+
+export async function updateRecipeImage(id: string, imageUrl: string | null) {
+  await db
+    .update(recipes)
+    .set({ imageUrl, updatedAt: new Date() })
+    .where(eq(recipes.id, id));
+  revalidatePath(`/admin/recipes/${id}`);
+  revalidatePath("/admin/recipes");
+  revalidatePath("/", "layout");
 }
 
 export async function deleteRecipe(formData: FormData) {
