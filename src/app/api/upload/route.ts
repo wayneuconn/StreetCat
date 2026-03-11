@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
   const slug = stableName
     ? stableName.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-").replace(/^-|-$/g, "")
     : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const filename = `recipes/${slug}.${ext}`;
+  const version = Date.now();
+  const filename = `recipes/${slug}-${version}.${ext}`;
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const blob = bucket.file(filename);

@@ -17,17 +17,23 @@ function nameToSlug(name: string): string {
 
 async function findImageUrl(name: string): Promise<string | null> {
   const slug = nameToSlug(name);
-  // Check common extensions
-  for (const ext of ["png", "jpg", "jpeg", "webp"]) {
-    const url = `${GCS_BASE}/recipes/${slug}.${ext}`;
-    try {
-      const res = await fetch(url, { method: "HEAD" });
-      if (res.ok) return url;
-    } catch {
-      // ignore
-    }
+  // List objects with the slug prefix and pick the latest one
+  try {
+    const res = await fetch(
+      `https://storage.googleapis.com/storage/v1/b/${BUCKET_NAME}/o?prefix=recipes/${encodeURIComponent(slug)}`
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.items || data.items.length === 0) return null;
+    // Sort by timeCreated descending to get the latest version
+    const latest = data.items.sort(
+      (a: { timeCreated: string }, b: { timeCreated: string }) =>
+        b.timeCreated.localeCompare(a.timeCreated)
+    )[0];
+    return `${GCS_BASE}/${latest.name}`;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 async function seed() {
