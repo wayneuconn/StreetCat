@@ -32,6 +32,10 @@ export async function updateIngredient(formData: FormData) {
 
 export async function deleteIngredient(formData: FormData) {
   const id = formData.get("id") as string;
-  await db.delete(ingredients).where(eq(ingredients.id, id));
+  // Don't actually delete — just zero out the quantity
+  await db
+    .update(ingredients)
+    .set({ quantityOnHand: 0, updatedAt: new Date() })
+    .where(eq(ingredients.id, id));
   revalidatePath("/admin/inventory");
 }

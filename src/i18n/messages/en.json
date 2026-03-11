@@ -110,7 +110,8 @@
         "garnish": "Garnish",
         "bitter": "Bitter",
         "other": "Other"
-      }
+      },
+      "zero": "Zero Out"
     },
     "recipes": {
       "title": "Recipes",

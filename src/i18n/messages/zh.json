@@ -110,7 +110,8 @@
         "garnish": "装饰物",
         "bitter": "苦精",
         "other": "其他"
-      }
+      },
+      "zero": "清零"
     },
     "recipes": {
       "title": "配方管理",

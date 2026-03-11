@@ -51,62 +51,131 @@ async function seed() {
 
   // --- Ingredients ---
 
+  // Helper to reduce repetition
+  const s = (name: string, qty = 0) => ({ name, category: "spirit" as const, unit: "oz" as const, quantityOnHand: qty });
+  const l = (name: string, qty = 0) => ({ name, category: "liqueur" as const, unit: "oz" as const, quantityOnHand: qty });
+  const j = (name: string, qty = 0) => ({ name, category: "juice" as const, unit: "oz" as const, quantityOnHand: qty });
+  const m = (name: string, qty = 0, unit: "oz" | "ml" | "piece" | "bottle" = "oz") => ({ name, category: "mixer" as const, unit, quantityOnHand: qty });
+  const b = (name: string, qty = 0) => ({ name, category: "bitter" as const, unit: "dash" as const, quantityOnHand: qty });
+  const g = (name: string, qty = 0) => ({ name, category: "garnish" as const, unit: "piece" as const, quantityOnHand: qty });
+  const o = (name: string, qty = 0, unit: "oz" | "ml" | "piece" | "bottle" = "piece") => ({ name, category: "other" as const, unit, quantityOnHand: qty });
+
   const spirits = [
-    { name: "Bourbon", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 32 },
-    { name: "Rye Whiskey", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 24 },
-    { name: "London Dry Gin", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 32 },
-    { name: "Vodka", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 32 },
-    { name: "White Rum", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 24 },
-    { name: "Tequila Blanco", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 24 },
-    { name: "Campari", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 16 },
-    { name: "Sweet Vermouth", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 16 },
-    { name: "Dry Vermouth", category: "spirit" as const, unit: "oz" as const, quantityOnHand: 12 },
+    // Whiskey
+    s("Bourbon", 32), s("Rye Whiskey", 24), s("Scotch Whisky"), s("Irish Whiskey"),
+    s("Japanese Whisky"), s("Tennessee Whiskey"),
+    // Gin
+    s("London Dry Gin", 32), s("Plymouth Gin"), s("Old Tom Gin"), s("Navy Strength Gin"),
+    s("Hendrick's Gin"), s("Tanqueray"),
+    // Vodka
+    s("Vodka", 32), s("Absolut"), s("Grey Goose"), s("Flavored Vodka"),
+    // Rum
+    s("White Rum", 24), s("Dark Rum"), s("Aged Rum"), s("Overproof Rum"),
+    s("Coconut Rum"), s("Spiced Rum"),
+    // Tequila / Mezcal
+    s("Tequila Blanco", 24), s("Tequila Reposado"), s("Tequila Añejo"), s("Mezcal"),
+    // Brandy
+    s("Cognac"), s("Brandy"), s("Pisco"), s("Calvados"),
+    // Fortified / Aromatized
+    s("Campari", 16), s("Aperol"), s("Sweet Vermouth", 16), s("Dry Vermouth", 12),
+    s("Lillet Blanc"), s("Pimm's No.1"),
+    // Asian spirits
+    s("Baijiu 白酒"), s("Sake 清酒"), s("Soju 烧酒"), s("Shochu 焼酎"),
+    // Absinthe
+    s("Absinthe"),
   ];
 
   const liqueurs = [
-    { name: "Cointreau", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Blue Curaçao", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Midori", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Baileys", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Blackcurrant Liqueur", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Seedlip 108", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 8 },
-    { name: "Seedlip 94", category: "liqueur" as const, unit: "oz" as const, quantityOnHand: 8 },
+    // Orange
+    l("Cointreau", 12), l("Grand Marnier"), l("Blue Curaçao", 12), l("Triple Sec"),
+    // Fruit
+    l("Midori", 12), l("Chambord"), l("Peach Schnapps"), l("Malibu"),
+    l("Limoncello"), l("Maraschino Liqueur"), l("Crème de Cassis"),
+    l("Blackcurrant Liqueur", 12), l("Passion Fruit Liqueur"), l("Lychee Liqueur"),
+    l("Banana Liqueur"), l("Strawberry Liqueur"), l("Mango Liqueur"),
+    // Cream / Nut
+    l("Baileys", 12), l("Kahlúa"), l("Amaretto"), l("Frangelico"),
+    l("Crème de Cacao"), l("Mozart Chocolate"),
+    // Herbal
+    l("Chartreuse Green"), l("Chartreuse Yellow"), l("Bénédictine"), l("Galliano"),
+    l("St-Germain Elderflower"), l("Drambuie"), l("Jägermeister"),
+    // Non-alcoholic spirits
+    l("Seedlip 108", 8), l("Seedlip 94", 8), l("Lyre's Dry London"),
   ];
 
   const juices = [
-    { name: "Fresh Lime Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Fresh Lemon Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Orange Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 24 },
-    { name: "Cranberry Juice", category: "juice" as const, unit: "oz" as const, quantityOnHand: 16 },
+    j("Fresh Lime Juice", 12), j("Fresh Lemon Juice", 12),
+    j("Orange Juice", 24), j("Grapefruit Juice"), j("Pineapple Juice"),
+    j("Cranberry Juice", 16), j("Apple Juice"), j("Tomato Juice"),
+    j("Passion Fruit Juice"), j("Mango Juice"), j("Peach Juice"),
+    j("Lychee Juice"), j("Watermelon Juice"), j("Pomegranate Juice"),
+    j("Guava Juice"), j("Yuzu Juice 柚子汁"), j("Calamansi Juice 金桔汁"),
+    j("水溶C100 柠檬味"), j("水溶C100 西柚味"),
   ];
 
   const mixers = [
-    { name: "Simple Syrup", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 16 },
-    { name: "Soda Water", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 64 },
-    { name: "Tonic Water", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 48 },
-    { name: "Ginger Beer", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 32 },
-    { name: "Egg White", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 8 },
-    { name: "Grenadine", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Yakult", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Coconut Milk", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Coconut Water", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 16 },
-    { name: "Cream", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Jasmine Oolong Tea", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 24 },
-    { name: "Cream Cap", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 12 },
-    { name: "Lavender Syrup", category: "mixer" as const, unit: "oz" as const, quantityOnHand: 8 },
+    // Syrups
+    m("Simple Syrup", 16), m("Rich Simple Syrup"), m("Demerara Syrup"),
+    m("Honey Syrup"), m("Agave Syrup"), m("Maple Syrup"),
+    m("Grenadine", 12), m("Orgeat"), m("Lavender Syrup", 8),
+    m("Rose Syrup"), m("Vanilla Syrup"), m("Cinnamon Syrup"),
+    m("Ginger Syrup"), m("Passion Fruit Syrup"), m("Matcha Syrup 抹茶糖浆"),
+    m("Brown Sugar Syrup 黑糖糖浆"), m("Osmanthus Syrup 桂花糖浆"),
+    // Sodas & Carbonated
+    m("Soda Water", 64), m("Tonic Water", 48), m("Ginger Beer", 32), m("Ginger Ale"),
+    m("Cola"), m("Sprite / 7-Up"), m("Red Bull"),
+    // Dairy & Cream
+    m("Egg White", 8), m("Whole Egg"), m("Cream", 12), m("Cream Cap", 12),
+    m("Heavy Cream"), m("Coconut Cream"), m("Condensed Milk"),
+    m("Half & Half"), m("Oat Milk 燕麦奶"), m("Almond Milk 杏仁奶"),
+    // Coconut & Tropical
+    m("Coconut Milk", 12), m("Coconut Water", 16),
+    // Tea & Coffee
+    m("Jasmine Oolong Tea", 24), m("Earl Grey Tea"), m("Matcha Powder"),
+    m("Espresso"), m("Cold Brew Coffee"), m("Hojicha 焙茶"),
+    m("Pu-erh Tea 普洱茶"), m("Chrysanthemum Tea 菊花茶"),
+    // Chinese / Asian specialties
+    m("Yakult 养乐多", 12), m("Calpico 可尔必思"),
+    m("Coconut Jelly 椰果"), m("Lychee Jelly 荔枝果冻"),
+    m("Konjac Jelly 蒟蒻果冻"), m("Nata de Coco"),
+    m("Tapioca Pearls 珍珠"), m("Aloe Vera Pulp 芦荟果肉"),
+    m("Red Bean Paste 红豆沙"), m("Taro Paste 芋泥"),
+    m("Peanut Butter 花生酱"),
+    // Other
+    m("Worcestershire Sauce"), m("Tabasco"), m("Celery Salt"),
+    m("Salt Solution 盐水"), m("Aquafaba 鹰嘴豆水"),
   ];
 
   const bitters = [
-    { name: "Angostura Bitters", category: "bitter" as const, unit: "dash" as const, quantityOnHand: 50 },
+    b("Angostura Bitters", 50), b("Orange Bitters"), b("Peychaud's Bitters"),
+    b("Chocolate Bitters"), b("Mole Bitters"), b("Celery Bitters"),
+    b("Lavender Bitters"), b("Fee Brothers Whiskey Barrel Aged"),
   ];
 
   const garnishes = [
-    { name: "Orange Peel", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 20 },
-    { name: "Lime Wheel", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 20 },
-    { name: "Maraschino Cherry", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 30 },
-    { name: "Mint Sprig", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 20 },
-    { name: "Olive", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 20 },
-    { name: "Cocoa Powder", category: "garnish" as const, unit: "piece" as const, quantityOnHand: 10 },
+    // Citrus
+    g("Orange Peel", 20), g("Lemon Peel"), g("Lime Wheel", 20), g("Lemon Wheel"),
+    g("Grapefruit Peel"), g("Dried Orange Slice 干橙片"), g("Dried Lemon Slice 干柠檬片"),
+    g("Dried Lime Slice 干青柠片"), g("Dehydrated Citrus Wheel 脱水柑橘片"),
+    // Fruits
+    g("Maraschino Cherry", 30), g("Luxardo Cherry"),
+    g("Pineapple Wedge"), g("Strawberry"), g("Raspberry"), g("Blueberry"),
+    g("Banana Slice"), g("Apple Slice"), g("Star Fruit Slice 杨桃片"),
+    g("Dragon Fruit Slice 火龙果片"), g("Lychee 荔枝"),
+    // Herbs & Flowers
+    g("Mint Sprig", 20), g("Basil Leaf"), g("Rosemary Sprig"), g("Thyme Sprig"),
+    g("Lavender Sprig"), g("Edible Flower 食用花"), g("Rose Petal 玫瑰花瓣"),
+    g("Butterfly Pea Flower 蝶豆花"), g("Osmanthus 桂花"),
+    // Savory & Spice
+    g("Olive", 20), g("Celery Stalk"), g("Cucumber Ribbon"), g("Jalapeño Slice"),
+    g("Ginger Slice"), g("Star Anise 八角"), g("Cinnamon Stick"), g("Nutmeg 肉豆蔻"),
+    g("Cocoa Powder", 10), g("Matcha Powder 抹茶粉"),
+    // Other
+    g("Salt Rim 盐边"), g("Sugar Rim 糖边"), g("Tajin Rim"),
+    g("Cocktail Umbrella"), g("Cocktail Pick"), g("Bamboo Skewer 竹签"),
+    g("Cotton Candy 棉花糖"), g("Whipped Cream 奶油"),
+    g("Marshmallow 棉花糖"), g("Chocolate Shavings 巧克力碎"),
+    g("Toasted Coconut Flakes 烤椰丝"),
   ];
 
   const allIngredients = [...spirits, ...liqueurs, ...juices, ...mixers, ...bitters, ...garnishes];

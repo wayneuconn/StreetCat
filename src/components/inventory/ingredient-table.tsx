@@ -101,12 +101,12 @@ export function IngredientTable({
                     </div>
                   </form>
                 ) : (
-                  <div className="flex items-center justify-between">
+                  <div className={`flex items-center justify-between ${ing.quantityOnHand <= 0 ? "opacity-40" : ""}`}>
                     <span className="font-medium text-text-primary">
                       {ing.name}
                     </span>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-text-secondary">
+                      <span className={`text-sm ${ing.quantityOnHand <= 0 ? "text-accent-burgundy" : "text-text-secondary"}`}>
                         {ing.quantityOnHand} {ing.unit}
                       </span>
                       <button
@@ -115,15 +115,17 @@ export function IngredientTable({
                       >
                         {tc("edit")}
                       </button>
-                      <form action={deleteIngredient}>
-                        <input type="hidden" name="id" value={ing.id} />
-                        <button
-                          type="submit"
-                          className="text-xs text-text-muted hover:text-accent-burgundy transition-colors"
-                        >
-                          {tc("delete")}
-                        </button>
-                      </form>
+                      {ing.quantityOnHand > 0 && (
+                        <form action={deleteIngredient}>
+                          <input type="hidden" name="id" value={ing.id} />
+                          <button
+                            type="submit"
+                            className="text-xs text-text-muted hover:text-accent-burgundy transition-colors"
+                          >
+                            {t("zero")}
+                          </button>
+                        </form>
+                      )}
                     </div>
                   </div>
                 )}
