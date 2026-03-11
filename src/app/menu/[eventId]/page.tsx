@@ -85,7 +85,7 @@ export default async function EventMenuPage({
                     className={`block w-2/5 flex-shrink-0 ${isSoldOut ? "opacity-40 grayscale" : ""}`}
                   >
                     {item.recipe.imageUrl ? (
-                      <div className="w-full aspect-square rounded-lg bg-bg-secondary/50 flex items-center justify-center overflow-hidden">
+                      <div className="w-full aspect-square rounded-lg flex items-center justify-center overflow-hidden">
                         <img
                           src={item.recipe.imageUrl}
                           alt={item.recipe.name}

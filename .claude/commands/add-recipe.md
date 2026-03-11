@@ -27,17 +27,20 @@ Ingredient fields:
 
 ## Your process
 
-1. Parse whatever info the user gives you. They might say something casual like "加一杯Espresso Martini，伏特加咖啡力娇酒浓缩咖啡" — you should understand this.
+1. The user will usually only provide the **name** and **instructions** (making steps). Sometimes even just a name. Parse whatever they give you.
 
-2. If you have enough info to build the recipe, construct the full JSON. Use your cocktail knowledge to fill in reasonable defaults:
-   - Infer standard amounts if not specified (e.g. a typical Espresso Martini is 1.5oz vodka, 1oz Kahlúa, 1oz espresso)
-   - Infer glassType from the cocktail type
-   - Write a simple Chinese description
-   - Write Chinese instructions
-   - Assign appropriate abv star rating
-   - Assign flavor category based on the drink's character
+2. You MUST fill in everything else yourself using your cocktail knowledge:
+   - **description**: Write a concise Chinese description (factual, not pretentious). Describe the drink's character in 1-2 sentences.
+   - **ingredients**: Infer the full ingredient list with standard amounts from the recipe name and any instructions given. Use classic/standard proportions.
+   - **glassType**: Infer from the cocktail type (e.g. Old Fashioned → rocks, Martini → coupe, Highball → highball)
+   - **flavor**: Assign a mood/vibe category in Chinese with emoji (e.g. "晒太阳☀️", "深夜流浪🎑", "微醺午后🌿", "派对之夜🪩")
+   - **characteristics**: Comma-separated Chinese flavor notes (e.g. "酸甜、清爽、柑橘调")
+   - **abv**: Star rating 1-5 based on alcohol content
+   - **price**: Leave as null unless the user specifies
 
-3. If critical info is missing and you can't reasonably infer it, ask the user. But prefer inferring over asking — you're the cocktail expert.
+3. If the user provides instructions, use them as-is (translate to Chinese if needed). If not, write Chinese instructions yourself based on standard technique.
+
+4. Only ask the user if you truly cannot identify what drink they mean. Never ask about description, flavor, characteristics, glassType, or abv — always fill those in yourself.
 
 4. Before running the script, show the user what you're about to add in a readable format. Then run:
    ```
