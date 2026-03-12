@@ -153,7 +153,10 @@
       "onHand": "On Hand",
       "toBuy": "To Buy",
       "showAll": "Show all ingredients",
-      "showToBuy": "Show only to buy"
+      "showToBuy": "Show only to buy",
+      "orderHistory": "Order History",
+      "orderHistoryEmpty": "No orders yet",
+      "orderCount": "Orders"
     }
   }
 }

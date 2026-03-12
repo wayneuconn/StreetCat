@@ -40,6 +40,9 @@ export default async function EventsPage() {
                     <span>
                       {t("expectedGuests")}: {event.expectedGuests}
                     </span>
+                    <span>
+                      {t("orderCount")}: {event.orders.length}
+                    </span>
                   </div>
                 </Link>
                 <div className="flex items-center gap-3">

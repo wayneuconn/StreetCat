@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getEvent } from "@/lib/queries/events";
 import { getAllRecipes } from "@/lib/queries/recipes";
+import { getEventOrders } from "@/lib/queries/orders";
 import { calculateShoppingList } from "@/lib/shopping";
 import {
   updateEvent,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/actions/events";
 import Link from "next/link";
 import { ShoppingListTable } from "@/components/event/shopping-list-table";
+import { OrderHistoryTable } from "@/components/event/order-history-table";
 
 export default async function EventEditorPage({
   params,
@@ -27,6 +29,9 @@ export default async function EventEditorPage({
 
   const allRecipes = await getAllRecipes();
   const shoppingList = await calculateShoppingList(id);
+  const eventOrders = await getEventOrders(id);
+  const tq = await getTranslations("admin.queue");
+  const to = await getTranslations("order.status");
 
   // Recipes not already on the menu
   const menuRecipeIds = new Set(event.menuItems.map((m) => m.recipeId));
@@ -208,6 +213,36 @@ export default async function EventEditorPage({
             empty: t("shoppingListEmpty"),
             showAll: t("showAll"),
             showToBuy: t("showToBuy"),
+          }}
+        />
+      </div>
+
+      {/* Order history */}
+      <div className="card space-y-4">
+        <h3 className="font-heading text-lg text-accent-gold">
+          {t("orderHistory")}
+          <span className="text-sm text-text-muted font-normal ml-2">
+            ({eventOrders.length})
+          </span>
+        </h3>
+        <OrderHistoryTable
+          orders={eventOrders.map((o) => ({
+            id: o.id,
+            guestName: o.guestName,
+            status: o.status,
+            createdAt: o.createdAt.toISOString(),
+            items: o.items.map((i) => ({
+              name: i.menuItem.recipe.name,
+              quantity: i.quantity,
+            })),
+          }))}
+          labels={{
+            empty: t("orderHistoryEmpty"),
+            guest: tq("guest"),
+            pending: to("pending"),
+            making: to("making"),
+            ready: to("ready"),
+            picked_up: to("picked_up"),
           }}
         />
       </div>

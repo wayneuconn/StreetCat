@@ -153,7 +153,10 @@
       "onHand": "库存",
       "toBuy": "待购",
       "showAll": "显示全部原料",
-      "showToBuy": "只显示待购"
+      "showToBuy": "只显示待购",
+      "orderHistory": "订单历史",
+      "orderHistoryEmpty": "暂无订单",
+      "orderCount": "订单"
     }
   }
 }

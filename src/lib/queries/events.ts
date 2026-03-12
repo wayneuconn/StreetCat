@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
-import { events, eventMenuItems } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { events, eventMenuItems, orders } from "@/lib/db/schema";
+import { eq, desc, sql } from "drizzle-orm";
 
 export async function getAllEvents() {
   return db.query.events.findMany({
     orderBy: [desc(events.date)],
+    with: {
+      orders: {
+        columns: { id: true },
+      },
+    },
   });
 }
 
