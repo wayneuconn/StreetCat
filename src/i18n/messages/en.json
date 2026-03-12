@@ -132,7 +132,10 @@
       "price": "Price",
       "image": "Image",
       "uploadImage": "Upload Image",
-      "changeImage": "Change Image"
+      "changeImage": "Change Image",
+      "filterByIngredient": "Search ingredient to filter...",
+      "filterCount": "Found {count} recipes",
+      "clearFilter": "Clear filter"
     },
     "events": {
       "title": "Events",
@@ -148,7 +151,9 @@
       "shoppingListEmpty": "No additional purchases needed",
       "needed": "Needed",
       "onHand": "On Hand",
-      "toBuy": "To Buy"
+      "toBuy": "To Buy",
+      "showAll": "Show all ingredients",
+      "showToBuy": "Show only to buy"
     }
   }
 }

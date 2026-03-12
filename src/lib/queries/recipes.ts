@@ -5,6 +5,11 @@ import { eq, asc, sql } from "drizzle-orm";
 export async function getAllRecipes() {
   return db.query.recipes.findMany({
     orderBy: [asc(recipes.name)],
+    with: {
+      recipeIngredients: {
+        with: { ingredient: true },
+      },
+    },
   });
 }
 

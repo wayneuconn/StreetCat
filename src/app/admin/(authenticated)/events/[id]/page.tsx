@@ -11,6 +11,7 @@ import {
   toggleMenuItemAvailable,
 } from "@/lib/actions/events";
 import Link from "next/link";
+import { ShoppingListTable } from "@/components/event/shopping-list-table";
 
 export default async function EventEditorPage({
   params,
@@ -197,37 +198,18 @@ export default async function EventEditorPage({
         <h3 className="font-heading text-lg text-accent-gold">
           {t("shoppingList")}
         </h3>
-        {shoppingList.length === 0 ? (
-          <p className="text-text-muted text-sm">{t("shoppingListEmpty")}</p>
-        ) : (
-          <div className="space-y-2">
-            <div className="grid grid-cols-4 gap-2 text-xs font-semibold text-text-muted uppercase tracking-wider pb-2 border-b border-border-gold">
-              <span>{tc("noResults") === "No results" ? "Item" : "原料"}</span>
-              <span className="text-right">{t("needed")}</span>
-              <span className="text-right">{t("onHand")}</span>
-              <span className="text-right">{t("toBuy")}</span>
-            </div>
-            {shoppingList.map((item) => (
-              <div
-                key={item.ingredientId}
-                className="grid grid-cols-4 gap-2 text-sm py-1 border-b border-border-gold/50"
-              >
-                <span className="text-text-primary">
-                  {item.ingredientName}
-                </span>
-                <span className="text-right text-text-secondary">
-                  {item.needed.toFixed(1)} {item.unit}
-                </span>
-                <span className="text-right text-text-secondary">
-                  {item.onHand.toFixed(1)}
-                </span>
-                <span className="text-right text-accent-gold font-semibold">
-                  {item.toBuy.toFixed(1)}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+        <ShoppingListTable
+          items={shoppingList}
+          labels={{
+            item: tc("noResults") === "No results" ? "Item" : "原料",
+            needed: t("needed"),
+            onHand: t("onHand"),
+            toBuy: t("toBuy"),
+            empty: t("shoppingListEmpty"),
+            showAll: t("showAll"),
+            showToBuy: t("showToBuy"),
+          }}
+        />
       </div>
     </div>
   );

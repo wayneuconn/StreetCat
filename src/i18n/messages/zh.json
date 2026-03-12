@@ -132,7 +132,10 @@
       "price": "价格",
       "image": "图片",
       "uploadImage": "上传图片",
-      "changeImage": "更换图片"
+      "changeImage": "更换图片",
+      "filterByIngredient": "搜索原料筛选配方...",
+      "filterCount": "找到 {count} 个配方",
+      "clearFilter": "清除筛选"
     },
     "events": {
       "title": "活动管理",
@@ -148,7 +151,9 @@
       "shoppingListEmpty": "不需要额外采购",
       "needed": "需要",
       "onHand": "库存",
-      "toBuy": "待购"
+      "toBuy": "待购",
+      "showAll": "显示全部原料",
+      "showToBuy": "只显示待购"
     }
   }
 }

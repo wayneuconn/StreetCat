@@ -93,17 +93,15 @@ export async function calculateShoppingList(
     }
   }
 
-  // Calculate what to buy
+  // Calculate what to buy (include all items, even satisfied ones)
   const shoppingList: ShoppingItem[] = [];
   for (const [ingredientId, data] of needsMap) {
     const toBuy = Math.max(0, data.needed - data.onHand);
-    if (toBuy > 0) {
-      shoppingList.push({
-        ingredientId,
-        ...data,
-        toBuy,
-      });
-    }
+    shoppingList.push({
+      ingredientId,
+      ...data,
+      toBuy,
+    });
   }
 
   // Sort by category
