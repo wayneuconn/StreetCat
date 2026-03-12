@@ -71,7 +71,8 @@ export default async function CocktailDetailPage({
             </h1>
             {recipe.price != null && (
               <span className="font-heading text-2xl text-accent-gold ml-3">
-                ¥{recipe.price}
+                <span className="line-through opacity-50">${recipe.price}</span>
+                <span className="ml-2 font-bold">$0</span>
               </span>
             )}
           </div>

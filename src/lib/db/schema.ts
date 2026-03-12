@@ -116,6 +116,7 @@ export const eventMenuItems = pgTable("event_menu_items", {
     .references(() => recipes.id, { onDelete: "cascade" }),
   sortOrder: integer("sort_order").notNull().default(0),
   available: boolean("available").notNull().default(true),
+  isSpecial: boolean("is_special").notNull().default(false),
 });
 
 export const orders = pgTable("orders", {

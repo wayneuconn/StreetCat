@@ -10,6 +10,7 @@ import {
   addMenuItem,
   removeMenuItem,
   toggleMenuItemAvailable,
+  toggleMenuItemSpecial,
 } from "@/lib/actions/events";
 import Link from "next/link";
 import { ShoppingListTable } from "@/components/event/shopping-list-table";
@@ -137,6 +138,27 @@ export default async function EventEditorPage({
                   {item.recipe.name}
                 </span>
                 <div className="flex items-center gap-2">
+                  <form action={toggleMenuItemSpecial}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <input
+                      type="hidden"
+                      name="eventId"
+                      value={event.id}
+                    />
+                    <input
+                      type="hidden"
+                      name="isSpecial"
+                      value={String(item.isSpecial)}
+                    />
+                    <button
+                      type="submit"
+                      className={`badge text-xs ${
+                        item.isSpecial ? "badge-making" : "badge-pending"
+                      }`}
+                    >
+                      {item.isSpecial ? "★ Special" : "☆"}
+                    </button>
+                  </form>
                   <form action={toggleMenuItemAvailable}>
                     <input type="hidden" name="id" value={item.id} />
                     <input

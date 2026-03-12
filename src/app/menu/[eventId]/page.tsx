@@ -35,10 +35,14 @@ export default async function EventMenuPage({
     );
   }
 
-  // Group by flavor category (include all items, sold-out ones shown dimmed)
+  // Separate specials from regular items
   const allItems = event.menuItems;
+  const specials = allItems.filter((item) => item.isSpecial);
+  const regularItems = allItems.filter((item) => !item.isSpecial);
+
+  // Group regular items by flavor category
   const grouped = new Map<string, typeof allItems>();
-  for (const item of allItems) {
+  for (const item of regularItems) {
     const category = item.recipe.flavor || "其他";
     const list = grouped.get(category) || [];
     list.push(item);
@@ -63,6 +67,78 @@ export default async function EventMenuPage({
             <ShareQR eventId={eventId} eventName={event.name} />
           </div>
         </div>
+
+        {specials.length > 0 && (
+          <div className="space-y-8">
+            <div className="divider my-4">
+              <span className="font-heading text-lg text-accent-gold tracking-wider">
+                Today&apos;s Special
+              </span>
+            </div>
+
+            {specials.map((item) => {
+              const isSoldOut = !item.available;
+              return (
+                <div key={item.id} className="animate-fade-up">
+                  <Link
+                    href={`/menu/${eventId}/${item.id}`}
+                    className={`block ${isSoldOut ? "opacity-40 grayscale" : ""}`}
+                  >
+                    {item.recipe.imageUrl ? (
+                      <div className="w-full aspect-square rounded-lg overflow-hidden">
+                        <img
+                          src={item.recipe.imageUrl}
+                          alt={item.recipe.name}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full aspect-square rounded-lg bg-border-gold/10 flex items-center justify-center">
+                        <span className="text-5xl text-text-muted/30">🍸</span>
+                      </div>
+                    )}
+                  </Link>
+                  <div className={`mt-3 ${isSoldOut ? "opacity-60" : ""}`}>
+                    <Link href={`/menu/${eventId}/${item.id}`}>
+                      <h2 className={`font-heading text-xl font-semibold ${isSoldOut ? "text-text-muted" : "text-accent-gold"}`}>
+                        {item.recipe.name}
+                      </h2>
+                    </Link>
+                    {item.recipe.description && (
+                      <p className="mt-1.5 text-sm text-text-secondary leading-relaxed">
+                        {item.recipe.description}
+                      </p>
+                    )}
+                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-text-muted">
+                      {item.recipe.abv != null && (
+                        <AbvLevel level={item.recipe.abv} />
+                      )}
+                      {item.recipe.price != null && (
+                        <span className="text-accent-gold">
+                          <span className="line-through opacity-50">${item.recipe.price}</span>
+                          <span className="ml-1 font-bold">$0</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-2">
+                      {isSoldOut ? (
+                        <span className="text-xs text-accent-burgundy">
+                          {t("unavailable")}
+                        </span>
+                      ) : (
+                        <QuickAddButton
+                          menuItemId={item.id}
+                          name={item.recipe.name}
+                          eventId={eventId}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {categories.map((category) => {
           const items = grouped.get(category)!;
@@ -118,7 +194,8 @@ export default async function EventMenuPage({
                       )}
                       {item.recipe.price != null && (
                         <span className="text-accent-gold">
-                          ¥{item.recipe.price}
+                          <span className="line-through opacity-50">${item.recipe.price}</span>
+                          <span className="ml-1 font-bold">$0</span>
                         </span>
                       )}
                     </div>

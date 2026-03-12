@@ -105,3 +105,17 @@ export async function toggleMenuItemAvailable(formData: FormData) {
   revalidatePath(`/admin/events/${eventId}`);
   revalidatePath("/menu");
 }
+
+export async function toggleMenuItemSpecial(formData: FormData) {
+  const id = formData.get("id") as string;
+  const eventId = formData.get("eventId") as string;
+  const currentSpecial = formData.get("isSpecial") === "true";
+
+  await db
+    .update(eventMenuItems)
+    .set({ isSpecial: !currentSpecial })
+    .where(eq(eventMenuItems.id, id));
+
+  revalidatePath(`/admin/events/${eventId}`);
+  revalidatePath("/menu");
+}
