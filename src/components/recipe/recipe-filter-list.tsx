@@ -7,6 +7,7 @@ type Recipe = {
   id: string;
   name: string;
   description: string | null;
+  imageUrl: string | null;
   glassType: string | null;
   recipeIngredients: {
     ingredient: {
@@ -17,147 +18,111 @@ type Recipe = {
   }[];
 };
 
+const CATEGORY_ORDER = ["spirit", "liqueur", "juice", "mixer", "bitter", "garnish", "other"] as const;
+
 type Props = {
   recipes: Recipe[];
+  categoryLabels: Record<string, string>;
   labels: {
-    addRecipe: string;
     delete: string;
     noResults: string;
-    filterPlaceholder: string;
     filterCount: string;
     clearFilter: string;
+    allOption: string;
   };
   deleteAction: (formData: FormData) => Promise<void>;
 };
 
-export function RecipeFilterList({ recipes, labels, deleteAction }: Props) {
-  const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(
-    new Set()
-  );
-  const [searchTerm, setSearchTerm] = useState("");
+export function RecipeFilterList({ recipes, categoryLabels, labels, deleteAction }: Props) {
+  const [selectedByCategory, setSelectedByCategory] = useState<Record<string, string>>({});
 
-  // Build unique ingredient list grouped by category
+  // Build unique ingredient list grouped by category (only categories actually used)
   const ingredientsByCategory = useMemo(() => {
-    const map = new Map<string, Map<string, string>>(); // category -> (id -> name)
+    const map = new Map<string, { id: string; name: string }[]>();
+    const seen = new Set<string>();
     for (const r of recipes) {
       for (const ri of r.recipeIngredients) {
+        if (seen.has(ri.ingredient.id)) continue;
+        seen.add(ri.ingredient.id);
         const cat = ri.ingredient.category;
-        if (!map.has(cat)) map.set(cat, new Map());
-        map.get(cat)!.set(ri.ingredient.id, ri.ingredient.name);
+        if (!map.has(cat)) map.set(cat, []);
+        map.get(cat)!.push({ id: ri.ingredient.id, name: ri.ingredient.name });
       }
+    }
+    // Sort ingredients within each category
+    for (const [, items] of map) {
+      items.sort((a, b) => a.name.localeCompare(b.name));
     }
     return map;
   }, [recipes]);
 
-  // All unique ingredients for search
-  const allIngredients = useMemo(() => {
-    const list: { id: string; name: string; category: string }[] = [];
-    for (const [cat, items] of ingredientsByCategory) {
-      for (const [id, name] of items) {
-        list.push({ id, name, category: cat });
-      }
-    }
-    return list.sort((a, b) => a.name.localeCompare(b.name));
-  }, [ingredientsByCategory]);
+  // Ordered categories that actually have ingredients
+  const categories = useMemo(
+    () => CATEGORY_ORDER.filter((c) => ingredientsByCategory.has(c)),
+    [ingredientsByCategory]
+  );
 
-  const filteredIngredients = searchTerm
-    ? allIngredients.filter((i) =>
-        i.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  // Collect all selected ingredient IDs
+  const selectedIngredientIds = useMemo(() => {
+    return Object.values(selectedByCategory).filter(Boolean);
+  }, [selectedByCategory]);
 
   // Filter recipes
   const filteredRecipes = useMemo(() => {
-    if (selectedIngredients.size === 0) return recipes;
+    if (selectedIngredientIds.length === 0) return recipes;
     return recipes.filter((r) => {
-      const recipeIngIds = new Set(
-        r.recipeIngredients.map((ri) => ri.ingredient.id)
-      );
-      return [...selectedIngredients].every((id) => recipeIngIds.has(id));
+      const recipeIngIds = new Set(r.recipeIngredients.map((ri) => ri.ingredient.id));
+      return selectedIngredientIds.every((id) => recipeIngIds.has(id));
     });
-  }, [recipes, selectedIngredients]);
+  }, [recipes, selectedIngredientIds]);
 
-  const toggleIngredient = (id: string) => {
-    setSelectedIngredients((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+  const handleSelect = (category: string, ingredientId: string) => {
+    setSelectedByCategory((prev) => {
+      const next = { ...prev };
+      if (ingredientId === "") {
+        delete next[category];
+      } else {
+        next[category] = ingredientId;
+      }
       return next;
     });
   };
 
-  const getIngredientName = (id: string) =>
-    allIngredients.find((i) => i.id === id)?.name || id;
-
   return (
     <div className="space-y-4">
-      {/* Ingredient filter */}
+      {/* Category dropdowns */}
       <div className="card space-y-3">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={labels.filterPlaceholder}
-            className="input w-full text-sm"
-          />
-          {searchTerm && filteredIngredients.length > 0 && (
-            <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-bg-card border border-border-gold rounded-lg max-h-48 overflow-y-auto shadow-lg">
-              {filteredIngredients.map((ing) => (
-                <button
-                  key={ing.id}
-                  type="button"
-                  onClick={() => {
-                    toggleIngredient(ing.id);
-                    setSearchTerm("");
-                  }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-bg-secondary transition-colors ${
-                    selectedIngredients.has(ing.id)
-                      ? "text-accent-gold"
-                      : "text-text-primary"
-                  }`}
-                >
+        <div className="grid grid-cols-2 gap-2">
+          {categories.map((cat) => (
+            <select
+              key={cat}
+              value={selectedByCategory[cat] || ""}
+              onChange={(e) => handleSelect(cat, e.target.value)}
+              className={`input text-sm ${selectedByCategory[cat] ? "border-accent-gold" : ""}`}
+            >
+              <option value="">{categoryLabels[cat] || cat}</option>
+              {ingredientsByCategory.get(cat)!.map((ing) => (
+                <option key={ing.id} value={ing.id}>
                   {ing.name}
-                  <span className="text-text-muted text-xs ml-2">
-                    {ing.category}
-                  </span>
-                </button>
+                </option>
               ))}
-            </div>
-          )}
+            </select>
+          ))}
         </div>
 
-        {/* Selected tags */}
-        {selectedIngredients.size > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {[...selectedIngredients].map((id) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => toggleIngredient(id)}
-                className="badge badge-making text-xs flex items-center gap-1"
-              >
-                {getIngredientName(id)}
-                <span className="opacity-60">×</span>
-              </button>
-            ))}
+        {selectedIngredientIds.length > 0 && (
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-text-muted">
+              {labels.filterCount.replace("{count}", String(filteredRecipes.length))}
+            </p>
             <button
               type="button"
-              onClick={() => setSelectedIngredients(new Set())}
+              onClick={() => setSelectedByCategory({})}
               className="text-xs text-text-muted hover:text-accent-gold transition-colors"
             >
               {labels.clearFilter}
             </button>
           </div>
-        )}
-
-        {selectedIngredients.size > 0 && (
-          <p className="text-xs text-text-muted">
-            {labels.filterCount.replace(
-              "{count}",
-              String(filteredRecipes.length)
-            )}
-          </p>
         )}
       </div>
 
@@ -168,11 +133,27 @@ export function RecipeFilterList({ recipes, labels, deleteAction }: Props) {
         <div className="space-y-2">
           {filteredRecipes.map((recipe) => (
             <div key={recipe.id} className="card card-hover">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Thumbnail */}
                 <Link
                   href={`/admin/recipes/${recipe.id}`}
-                  className="flex-1"
+                  className="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden flex items-center justify-center"
                 >
+                  {recipe.imageUrl ? (
+                    <img
+                      src={recipe.imageUrl}
+                      alt={recipe.name}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-border-gold/10 flex items-center justify-center">
+                      <span className="text-xl text-text-muted/30">🍸</span>
+                    </div>
+                  )}
+                </Link>
+
+                {/* Info */}
+                <Link href={`/admin/recipes/${recipe.id}`} className="flex-1 min-w-0">
                   <h3 className="font-heading text-lg text-accent-gold hover:text-accent-gold-light transition-colors">
                     {recipe.name}
                   </h3>
@@ -181,15 +162,14 @@ export function RecipeFilterList({ recipes, labels, deleteAction }: Props) {
                       {recipe.description}
                     </p>
                   )}
-                  <div className="flex gap-2 mt-1 text-xs text-text-muted">
-                    {recipe.glassType && <span>{recipe.glassType}</span>}
-                  </div>
                 </Link>
+
+                {/* Delete */}
                 <form action={deleteAction}>
                   <input type="hidden" name="id" value={recipe.id} />
                   <button
                     type="submit"
-                    className="text-xs text-text-muted hover:text-accent-burgundy transition-colors ml-4"
+                    className="text-xs text-text-muted hover:text-accent-burgundy transition-colors ml-2"
                   >
                     {labels.delete}
                   </button>

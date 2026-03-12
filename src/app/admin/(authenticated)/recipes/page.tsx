@@ -7,6 +7,7 @@ import { RecipeFilterList } from "@/components/recipe/recipe-filter-list";
 export default async function RecipesPage() {
   const t = await getTranslations("admin.recipes");
   const tc = await getTranslations("common");
+  const ti = await getTranslations("admin.inventory.categories");
   const recipeList = await getAllRecipes();
 
   return (
@@ -22,13 +23,21 @@ export default async function RecipesPage() {
 
       <RecipeFilterList
         recipes={recipeList}
+        categoryLabels={{
+          spirit: ti("spirit"),
+          liqueur: ti("liqueur"),
+          juice: ti("juice"),
+          mixer: ti("mixer"),
+          bitter: ti("bitter"),
+          garnish: ti("garnish"),
+          other: ti("other"),
+        }}
         labels={{
-          addRecipe: t("addRecipe"),
           delete: tc("delete"),
           noResults: tc("noResults"),
-          filterPlaceholder: t("filterByIngredient"),
           filterCount: t("filterCount"),
           clearFilter: t("clearFilter"),
+          allOption: tc("noResults"),
         }}
         deleteAction={deleteRecipe}
       />
