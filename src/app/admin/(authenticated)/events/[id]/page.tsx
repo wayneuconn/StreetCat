@@ -15,6 +15,8 @@ import {
 import Link from "next/link";
 import { ShoppingListTable } from "@/components/event/shopping-list-table";
 import { OrderHistoryTable } from "@/components/event/order-history-table";
+import { EventAdminTabs } from "@/components/event/event-admin-tabs";
+import { ShareQR } from "@/components/share-qr";
 
 export default async function EventEditorPage({
   params,
@@ -41,9 +43,12 @@ export default async function EventEditorPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold text-accent-gold">
-          {t("editEvent")}
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-heading text-2xl font-bold text-accent-gold">
+            {t("editEvent")}
+          </h1>
+          <ShareQR eventId={event.id} eventName={event.name} />
+        </div>
         <Link
           href="/admin/events"
           className="text-sm text-text-muted hover:text-accent-gold transition-colors"
@@ -51,6 +56,9 @@ export default async function EventEditorPage({
           {tc("back")}
         </Link>
       </div>
+
+      <EventAdminTabs eventId={event.id} manageContent={
+        <div className="space-y-6">
 
       {/* Event details */}
       <form action={updateEvent} className="card space-y-4">
@@ -268,6 +276,8 @@ export default async function EventEditorPage({
           }}
         />
       </div>
+        </div>
+      } />
     </div>
   );
 }

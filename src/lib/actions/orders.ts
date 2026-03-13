@@ -7,10 +7,8 @@ import {
   orders,
   orderItems,
   ingredients,
-  eventMenuItems,
-  recipeIngredients,
 } from "@/lib/db/schema";
-import { eq, sql, and, inArray } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { emitOrderEvent } from "@/lib/events";
 
 /** Convert an amount from one unit to another (volume units via oz). */
@@ -137,44 +135,4 @@ async function deductInventory(orderId: string, eventId: string) {
       .where(eq(ingredients.id, ingredientId));
   }
 
-  // Check which ingredients are now depleted
-  const depletedIngredientIds = [...deductions.keys()];
-  if (depletedIngredientIds.length === 0) return;
-
-  const depletedIngredients = await db.query.ingredients.findMany({
-    where: and(
-      inArray(ingredients.id, depletedIngredientIds),
-      sql`${ingredients.quantityOnHand} <= 0`
-    ),
-  });
-
-  if (depletedIngredients.length === 0) return;
-
-  // Find all menu items in this event that use depleted ingredients
-  const depletedIds = depletedIngredients.map((i) => i.id);
-  const affectedRecipeIngredients = await db.query.recipeIngredients.findMany({
-    where: inArray(recipeIngredients.ingredientId, depletedIds),
-  });
-  const affectedRecipeIds = [
-    ...new Set(affectedRecipeIngredients.map((ri) => ri.recipeId)),
-  ];
-
-  if (affectedRecipeIds.length === 0) return;
-
-  // Auto-86: mark affected menu items as unavailable
-  const menuItems = await db.query.eventMenuItems.findMany({
-    where: eq(eventMenuItems.eventId, eventId),
-  });
-
-  for (const mi of menuItems) {
-    if (affectedRecipeIds.includes(mi.recipeId) && mi.available) {
-      await db
-        .update(eventMenuItems)
-        .set({ available: false })
-        .where(eq(eventMenuItems.id, mi.id));
-    }
-  }
-
-  revalidatePath(`/menu/${eventId}`);
-  revalidatePath(`/admin/events/${eventId}`);
 }
