@@ -4,27 +4,12 @@ import { useState, useRef, useCallback } from "react";
 import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 
-// Cat logo SVG path data (matches the home page logo)
-const CAT_SVG = `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M25 75 C25 45, 35 25, 50 20 C65 25, 75 45, 75 75" stroke="#d4a04a" stroke-width="3" fill="none"/>
-  <path d="M30 45 L25 20 L40 35" stroke="#d4a04a" stroke-width="3" fill="none"/>
-  <path d="M70 45 L75 20 L60 35" stroke="#d4a04a" stroke-width="3" fill="none"/>
-  <circle cx="40" cy="48" r="3" fill="#d4a04a"/>
-  <circle cx="60" cy="48" r="3" fill="#d4a04a"/>
-  <path d="M46 55 Q50 58 54 55" stroke="#d4a04a" stroke-width="2" fill="none"/>
-  <path d="M30 52 L18 50" stroke="#d4a04a" stroke-width="1.5"/>
-  <path d="M30 55 L18 56" stroke="#d4a04a" stroke-width="1.5"/>
-  <path d="M70 52 L82 50" stroke="#d4a04a" stroke-width="1.5"/>
-  <path d="M70 55 L82 56" stroke="#d4a04a" stroke-width="1.5"/>
-  <path d="M75 75 Q78 82, 85 80" stroke="#d4a04a" stroke-width="3" fill="none"/>
-</svg>`;
-
-function svgToImage(svg: string, size: number): Promise<HTMLImageElement> {
+function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = reject;
-    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    img.src = src;
   });
 }
 
@@ -104,7 +89,7 @@ export function ShareQR({
     ctx.drawImage(tmpCanvas, qrX, qrY, qrSize, qrSize);
 
     // Logo in center of QR
-    const logoImg = await svgToImage(CAT_SVG, logoAreaSize);
+    const logoImg = await loadImage("/logo.png");
     const logoBg = logoAreaSize + 10 * scale;
     const logoBgX = qrX + (qrSize - logoBg) / 2;
     const logoBgY = qrY + (qrSize - logoBg) / 2;
