@@ -37,7 +37,7 @@ export default function Home() {
         <img src="/logo.png" alt="StreetCat" className="mx-auto h-24 w-24 rounded-full" />
         <div>
           <h1 className="font-heading text-4xl font-bold text-accent-gold">
-            街猫酒吧
+            街猫酒馆
           </h1>
           <p className="mt-2 text-text-secondary">StreetCat Bar</p>
         </div>

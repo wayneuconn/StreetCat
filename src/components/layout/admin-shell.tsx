@@ -21,7 +21,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b border-border-gold bg-bg-primary/90 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
-          <Link href="/admin" className="font-heading text-lg font-bold text-accent-gold">
+          <Link href="/admin" className="flex items-center gap-2 font-heading text-lg font-bold text-accent-gold">
+            <img src="/logo.png" alt="" className="h-8 w-8 rounded-full" />
             {t("common.appName")}
           </Link>
           <div className="flex items-center gap-3">

@@ -20,7 +20,8 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b border-border-gold bg-bg-primary/90 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
-          <Link href={menuLink} className="font-heading text-lg font-bold text-accent-gold">
+          <Link href={menuLink} className="flex items-center gap-2 font-heading text-lg font-bold text-accent-gold">
+            <img src="/logo.png" alt="" className="h-8 w-8 rounded-full" />
             {t("common.appName")}
           </Link>
         </div>

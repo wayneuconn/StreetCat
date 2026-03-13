@@ -4,7 +4,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "StreetCat Bar | 街猫酒吧",
+  title: "街猫酒馆 | StreetCat",
   description: "Cocktail bar management",
 };
 
