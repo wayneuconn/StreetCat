@@ -17,6 +17,7 @@ import { ShoppingListTable } from "@/components/event/shopping-list-table";
 import { OrderHistoryTable } from "@/components/event/order-history-table";
 import { EventAdminTabs } from "@/components/event/event-admin-tabs";
 import { ShareQR } from "@/components/share-qr";
+import { MenuContent } from "@/components/menu/menu-content";
 
 export default async function EventEditorPage({
   params,
@@ -26,6 +27,7 @@ export default async function EventEditorPage({
   const { id } = await params;
   const t = await getTranslations("admin.events");
   const tc = await getTranslations("common");
+  const tm = await getTranslations("menu");
 
   const event = await getEvent(id);
   if (!event) notFound();
@@ -40,26 +42,24 @@ export default async function EventEditorPage({
   const menuRecipeIds = new Set(event.menuItems.map((m) => m.recipeId));
   const availableRecipes = allRecipes.filter((r) => !menuRecipeIds.has(r.id));
 
-  return (
+  const menuPreview = (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="font-heading text-2xl font-bold text-accent-gold">
-            {t("editEvent")}
-          </h1>
-          <ShareQR eventId={event.id} eventName={event.name} />
-        </div>
-        <Link
-          href="/admin/events"
-          className="text-sm text-text-muted hover:text-accent-gold transition-colors"
-        >
-          {tc("back")}
-        </Link>
+      <div className="text-center space-y-2">
+        <h1 className="font-heading text-3xl font-bold text-accent-gold">
+          {event.name}
+        </h1>
       </div>
+      <MenuContent
+        eventId={id}
+        menuItems={event.menuItems}
+        unavailableLabel={tm("unavailable")}
+        showQuickAdd={false}
+      />
+    </div>
+  );
 
-      <EventAdminTabs eventId={event.id} manageContent={
-        <div className="space-y-6">
-
+  const manageContent = (
+    <div className="space-y-6">
       {/* Event details */}
       <form action={updateEvent} className="card space-y-4">
         <input type="hidden" name="id" value={event.id} />
@@ -276,8 +276,30 @@ export default async function EventEditorPage({
           }}
         />
       </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="font-heading text-2xl font-bold text-accent-gold">
+            {t("editEvent")}
+          </h1>
+          <ShareQR eventId={event.id} eventName={event.name} />
         </div>
-      } />
+        <Link
+          href="/admin/events"
+          className="text-sm text-text-muted hover:text-accent-gold transition-colors"
+        >
+          {tc("back")}
+        </Link>
+      </div>
+
+      <EventAdminTabs
+        menuContent={menuPreview}
+        manageContent={manageContent}
+      />
     </div>
   );
 }
